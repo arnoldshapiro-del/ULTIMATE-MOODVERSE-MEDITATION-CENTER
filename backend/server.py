@@ -133,9 +133,13 @@ async def get_mood_entries(
     cursor = db.mood_entries.find(query).sort('date', -1).limit(limit)
     entries = await cursor.to_list(length=limit)
     
-    # Enrich with mood details
-    enriched_entries = [enrich_mood_entry(entry) for entry in entries]
-    return [MoodEntry(**entry) for entry in enriched_entries]
+    # Enrich with mood details and return as MoodEntry objects
+    enriched_entries = []
+    for entry in entries:
+        enriched_entry = enrich_mood_entry(entry)
+        enriched_entries.append(MoodEntry(**enriched_entry))
+    
+    return enriched_entries
 
 @api_router.get("/moods/stats", response_model=MoodStats)
 async def get_mood_stats():
