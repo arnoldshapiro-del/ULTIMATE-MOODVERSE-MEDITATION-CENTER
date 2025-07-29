@@ -1,13 +1,20 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime
 import uuid
+
+class MoodData(BaseModel):
+    id: str
+    emoji: str
+    label: str
+    color: str
 
 class MoodEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str = "default"  # For future multi-user support
     date: str  # YYYY-MM-DD format
     mood_id: str  # "happy", "sad", etc.
+    mood: Optional[MoodData] = None  # Enriched mood data
     note: str = ""
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     created_at: datetime = Field(default_factory=datetime.utcnow)
