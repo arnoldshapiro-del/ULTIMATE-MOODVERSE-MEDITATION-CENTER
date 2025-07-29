@@ -129,6 +129,40 @@ async def get_mood_entries(
     enriched_entries = [enrich_mood_entry(entry) for entry in entries]
     return [MoodEntry(**entry) for entry in enriched_entries]
 
+@api_router.get("/moods/stats", response_model=MoodStats)
+async def get_mood_stats():
+    """Get mood statistics"""
+    # Get all entries
+    cursor = db.mood_entries.find({})
+    entries = await cursor.to_list(length=None)
+    
+    if not entries:
+        return MoodStats(
+            total_entries=0,
+            mood_counts={},
+            most_common_mood="",
+            current_streak=0
+        )
+    
+    # Calculate mood counts
+    mood_counts = {}
+    for entry in entries:
+        mood_label = MOODS.get(entry['mood_id'], {}).get('label', entry['mood_id'])
+        mood_counts[mood_label] = mood_counts.get(mood_label, 0) + 1
+    
+    # Find most common mood
+    most_common_mood = max(mood_counts.items(), key=lambda x: x[1])[0] if mood_counts else ""
+    
+    # Calculate current streak
+    current_streak = await calculate_current_streak()
+    
+    return MoodStats(
+        total_entries=len(entries),
+        mood_counts=mood_counts,
+        most_common_mood=most_common_mood,
+        current_streak=current_streak
+    )
+
 @api_router.get("/moods/{mood_id}")
 async def get_mood_entry(mood_id: str):
     """Get specific mood entry by ID"""
