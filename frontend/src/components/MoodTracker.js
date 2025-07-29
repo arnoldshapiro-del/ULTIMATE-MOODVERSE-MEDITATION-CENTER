@@ -43,8 +43,10 @@ const MoodTracker = () => {
       setLoading(true);
       setError(null);
       const entries = await moodApi.getMoodEntries();
+      console.log('Loaded mood entries:', entries); // Debug log
       setMoodHistory(entries);
     } catch (err) {
+      console.error('Error loading mood history:', err);
       setError(err.message);
       toast({
         title: "Error",
