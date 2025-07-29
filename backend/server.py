@@ -31,18 +31,18 @@ def enrich_mood_entry(entry_dict):
     """Add mood details to mood entry"""
     mood_id = entry_dict['mood_id']
     if mood_id in MOODS:
-        entry_dict['mood'] = {
-            'id': mood_id,
+        entry_dict['mood'] = MoodData(
+            id=mood_id,
             **MOODS[mood_id]
-        }
+        )
     else:
         # Fallback for unknown mood_id
-        entry_dict['mood'] = {
-            'id': mood_id,
-            'emoji': '❓',
-            'label': mood_id.title(),
-            'color': 'bg-gray-100 border-gray-300'
-        }
+        entry_dict['mood'] = MoodData(
+            id=mood_id,
+            emoji='❓',
+            label=mood_id.title(),
+            color='bg-gray-100 border-gray-300'
+        )
     return entry_dict
 
 # Helper function to calculate streak
