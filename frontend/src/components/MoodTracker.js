@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, TrendingUp, Download, Plus } from 'lucide-react';
+import { Calendar, TrendingUp, Download, Plus, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Alert, AlertDescription } from './ui/alert';
 import { useToast } from '../hooks/use-toast';
-import { mockData } from '../utils/mock';
+import { moodApi } from '../services/moodApi';
 
 const moods = [
   { id: 'happy', emoji: '😊', label: 'Happy', color: 'bg-yellow-100 border-yellow-300' },
@@ -26,37 +27,90 @@ const MoodTracker = () => {
   const [moodHistory, setMoodHistory] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
   const [showAddMood, setShowAddMood] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [stats, setStats] = useState(null);
   const { toast } = useToast();
 
+  // Load mood history on component mount
   useEffect(() => {
-    // Load mock data
-    setMoodHistory(mockData.getMoodHistory());
+    loadMoodHistory();
+    loadStats();
   }, []);
 
-  const handleMoodSubmit = () => {
+  const loadMoodHistory = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const entries = await moodApi.getMoodEntries();
+      setMoodHistory(entries);
+    } catch (err) {
+      setError(err.message);
+      toast({
+        title: "Error",
+        description: "Failed to load mood history",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const statsData = await moodApi.getMoodStats();
+      setStats(statsData);
+    } catch (err) {
+      console.error('Failed to load stats:', err);
+    }
+  };
+
+  const handleMoodSubmit = async () => {
     if (!selectedMood) return;
 
-    const newEntry = {
-      id: Date.now().toString(),
-      date: currentDate,
-      mood: selectedMood,
-      note: note.trim(),
-      timestamp: new Date().toISOString()
-    };
+    try {
+      setLoading(true);
+      
+      const newEntry = {
+        date: currentDate,
+        mood: selectedMood,
+        note: note.trim(),
+        timestamp: new Date().toISOString()
+      };
 
-    // Update mock data
-    const updatedHistory = mockData.addMoodEntry(newEntry);
-    setMoodHistory(updatedHistory);
+      const savedEntry = await moodApi.createMoodEntry(newEntry);
+      
+      // Update local state
+      setMoodHistory(prev => {
+        // Remove existing entry for this date if it exists
+        const filtered = prev.filter(entry => entry.date !== currentDate);
+        // Add new entry and sort by date descending
+        return [savedEntry, ...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+      });
 
-    // Reset form
-    setSelectedMood(null);
-    setNote('');
-    setShowAddMood(false);
+      // Reload stats
+      loadStats();
 
-    toast({
-      title: "Mood recorded!",
-      description: `Your ${selectedMood.label.toLowerCase()} mood has been saved.`
-    });
+      // Reset form
+      setSelectedMood(null);
+      setNote('');
+      setShowAddMood(false);
+
+      toast({
+        title: "Mood recorded!",
+        description: `Your ${selectedMood.label.toLowerCase()} mood has been saved.`
+      });
+      
+    } catch (err) {
+      setError(err.message);
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getMoodForDate = (date) => {
@@ -107,15 +161,44 @@ const MoodTracker = () => {
     });
   };
 
-  const exportData = (format) => {
-    if (format === 'csv') {
-      mockData.exportToCSV(moodHistory);
-      toast({ title: "CSV Export", description: "Mood data exported to CSV file" });
-    } else {
-      mockData.exportToPDF(moodHistory);
-      toast({ title: "PDF Export", description: "Mood data exported to PDF file" });
+  const handleExport = async (format) => {
+    try {
+      setLoading(true);
+      
+      if (format === 'csv') {
+        await moodApi.exportToCsv();
+        toast({ 
+          title: "CSV Export", 
+          description: "Mood data exported successfully" 
+        });
+      } else {
+        await moodApi.exportToPdf();
+        toast({ 
+          title: "PDF Export", 
+          description: "Mood data exported successfully" 
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Export Error",
+        description: err.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading && moodHistory.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-4 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-gray-600">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          Loading your mood history...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-4">
@@ -124,7 +207,21 @@ const MoodTracker = () => {
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold text-gray-900">Mood Tracker</h1>
           <p className="text-gray-600">Track your daily emotions and discover patterns</p>
+          {stats && (
+            <div className="flex justify-center gap-4 text-sm text-gray-500 mt-2">
+              <span>{stats.total_entries} total entries</span>
+              {stats.current_streak > 0 && <span>{stats.current_streak} day streak!</span>}
+            </div>
+          )}
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         {/* Quick Add Mood */}
         <Card className="border-0 shadow-lg">
@@ -137,7 +234,8 @@ const MoodTracker = () => {
           <CardContent>
             <Dialog open={showAddMood} onOpenChange={setShowAddMood}>
               <DialogTrigger asChild>
-                <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white">
+                <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white" disabled={loading}>
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                   Record Today's Mood
                 </Button>
               </DialogTrigger>
@@ -151,7 +249,8 @@ const MoodTracker = () => {
                       <button
                         key={mood.id}
                         onClick={() => setSelectedMood(mood)}
-                        className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${
+                        disabled={loading}
+                        className={`p-3 rounded-lg border-2 transition-all hover:scale-105 disabled:opacity-50 ${
                           selectedMood?.id === mood.id 
                             ? mood.color + ' ring-2 ring-slate-400' 
                             : 'bg-white border-gray-200 hover:border-gray-300'
@@ -171,8 +270,14 @@ const MoodTracker = () => {
                         onChange={(e) => setNote(e.target.value)}
                         className="resize-none"
                         rows={3}
+                        disabled={loading}
                       />
-                      <Button onClick={handleMoodSubmit} className="w-full bg-slate-900 hover:bg-slate-800">
+                      <Button 
+                        onClick={handleMoodSubmit} 
+                        className="w-full bg-slate-900 hover:bg-slate-800"
+                        disabled={loading}
+                      >
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                         Save Mood
                       </Button>
                     </div>
@@ -200,16 +305,18 @@ const MoodTracker = () => {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={() => exportData('csv')}
+                onClick={() => handleExport('csv')}
                 className="flex items-center gap-2"
+                disabled={loading}
               >
                 <Download className="h-4 w-4" />
                 Export CSV
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => exportData('pdf')}
+                onClick={() => handleExport('pdf')}
                 className="flex items-center gap-2"
+                disabled={loading}
               >
                 <Download className="h-4 w-4" />
                 Export PDF
@@ -326,8 +433,10 @@ const MoodTracker = () => {
                   </div>
                 </div>
               ))}
-              {moodHistory.length === 0 && (
-                <p className="text-center text-gray-500 py-4">No mood entries yet. Start tracking today!</p>
+              {!loading && moodHistory.length === 0 && (
+                <p className="text-center text-gray-500 py-4">
+                  No mood entries yet. Start tracking today!
+                </p>
               )}
             </div>
           </CardContent>
