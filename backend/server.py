@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import csv
 import io
 
-from models import MoodEntry, MoodEntryCreate, MoodEntryUpdate, MoodStats, MOODS
+from models import MoodEntry, MoodEntryCreate, MoodEntryUpdate, MoodStats, MoodData, MOODS
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
