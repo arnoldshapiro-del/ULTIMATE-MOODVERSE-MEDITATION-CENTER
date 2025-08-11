@@ -584,6 +584,14 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         ) : (
           // Active Meditation Session
           <div className="space-y-6 relative h-full">
+            {/* Debug Video Conditional - REMOVE IN PRODUCTION */}
+            {console.log('🔍 VIDEO DEBUG:', {
+              showVideo,
+              selectedMeditation: selectedMeditation?.title,
+              videoSrc: selectedMeditation?.videoSrc,
+              conditional: showVideo && selectedMeditation && selectedMeditation.videoSrc
+            })}
+            
             {/* Background Video */}
             {showVideo && selectedMeditation && selectedMeditation.videoSrc && (
               <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
@@ -596,11 +604,11 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   preload="metadata"
                   src={selectedMeditation.videoSrc}
                   onError={(e) => {
-                    console.warn('Video failed to load:', e.target.src);
+                    console.warn('🚨 Video failed to load:', e.target.src);
                     setShowVideo(false);
                   }}
                   onLoadedData={(e) => {
-                    console.log('Video loaded successfully:', e.target.src);
+                    console.log('✅ Video loaded successfully:', e.target.src);
                   }}
                 />
               </div>
