@@ -107,53 +107,65 @@ async def generate_ai_insights(user_id: str, entries: List[dict]):
     insights = []
     
     # Mood pattern analysis
-    positive_moods = [e for e in entries if MOODS.get(e['mood_id'], {}).get('category') == 'positive']
-    negative_moods = [e for e in entries if MOODS.get(e['mood_id'], {}).get('category') == 'negative']
+    positive_moods = [e for e in entries if e and MOODS.get(e.get('mood_id'), {}).get('category') == 'positive']
+    negative_moods = [e for e in entries if e and MOODS.get(e.get('mood_id'), {}).get('category') == 'negative']
     
-    positive_ratio = len(positive_moods) / len(entries)
-    
-    if positive_ratio > 0.75:
-        insights.append("🌟 Exceptional emotional well-being! You're maintaining a very positive mindset.")
-    elif positive_ratio > 0.6:
-        insights.append("😊 Great emotional balance! You're handling life's challenges well.")
-    elif positive_ratio < 0.3:
-        insights.append("💙 Consider focusing on self-care activities. Remember, seeking support is a sign of strength.")
+    if len(entries) > 0:
+        positive_ratio = len(positive_moods) / len(entries)
+        
+        if positive_ratio > 0.75:
+            insights.append("🌟 Exceptional emotional well-being! You're maintaining a very positive mindset.")
+        elif positive_ratio > 0.6:
+            insights.append("😊 Great emotional balance! You're handling life's challenges well.")
+        elif positive_ratio < 0.3:
+            insights.append("💙 Consider focusing on self-care activities. Remember, seeking support is a sign of strength.")
+        else:
+            insights.append("🌈 Your emotional journey shows variety - this is completely normal and healthy.")
     
     # Time pattern analysis
     recent_entries = entries[:14]  # Last 2 weeks
-    if len(recent_entries) >= 10:
-        avg_intensity = statistics.mean([e.get('intensity', 3) for e in recent_entries])
-        if avg_intensity > 4:
-            insights.append("⚡ Your emotional intensity has been high lately. Consider meditation to find balance.")
-        elif avg_intensity < 2:
-            insights.append("🌱 Your emotions seem gentle recently. This could be a time for self-reflection.")
+    if len(recent_entries) >= 3:
+        intensities = [e.get('intensity', 3) for e in recent_entries if e and e.get('intensity')]
+        if intensities:
+            avg_intensity = statistics.mean(intensities)
+            if avg_intensity > 4:
+                insights.append("⚡ Your emotional intensity has been high lately. Consider meditation to find balance.")
+            elif avg_intensity < 2:
+                insights.append("🌱 Your emotions seem gentle recently. This could be a time for self-reflection.")
     
     # Weather correlation
-    weather_entries = [e for e in entries if e.get('weather')]
-    if len(weather_entries) > 10:
+    weather_entries = [e for e in entries if e and e.get('weather', {}).get('condition')]
+    if len(weather_entries) > 3:
         sunny_moods = [e for e in weather_entries if e['weather'].get('condition') == 'sunny']
         if len(sunny_moods) > len(weather_entries) * 0.6:
             insights.append("☀️ You tend to feel better on sunny days. Try light therapy during gloomy weather.")
     
     # Social activity correlation
-    social_entries = [e for e in entries if 'social' in e.get('tags', [])]
-    if len(social_entries) > 5:
-        social_avg = statistics.mean([e.get('intensity', 3) for e in social_entries])
-        overall_avg = statistics.mean([e.get('intensity', 3) for e in entries])
-        if social_avg > overall_avg + 0.5:
-            insights.append("👥 Social activities boost your mood significantly. Stay connected with friends!")
+    social_entries = [e for e in entries if e and 'social' in e.get('tags', [])]
+    if len(social_entries) > 2:
+        social_intensities = [e.get('intensity', 3) for e in social_entries if e.get('intensity')]
+        all_intensities = [e.get('intensity', 3) for e in entries if e and e.get('intensity')]
+        if social_intensities and all_intensities:
+            social_avg = statistics.mean(social_intensities)
+            overall_avg = statistics.mean(all_intensities)
+            if social_avg > overall_avg + 0.5:
+                insights.append("👥 Social activities boost your mood significantly. Stay connected with friends!")
     
     # Gratitude practice
-    grateful_entries = [e for e in entries if e['mood_id'] == 'grateful']
-    if len(grateful_entries) > 10:
+    grateful_entries = [e for e in entries if e and e.get('mood_id') == 'grateful']
+    if len(grateful_entries) > 3:
         insights.append("🙏 Your gratitude practice is strong and contributes to emotional resilience.")
     
     # Exercise correlation
-    exercise_entries = [e for e in entries if 'exercise' in e.get('tags', [])]
-    if len(exercise_entries) > 5:
-        exercise_avg = statistics.mean([e.get('intensity', 3) for e in exercise_entries])
-        if exercise_avg > 3.5:
+    exercise_entries = [e for e in entries if e and 'exercise' in e.get('tags', [])]
+    if len(exercise_entries) > 2:
+        exercise_intensities = [e.get('intensity', 3) for e in exercise_entries if e.get('intensity')]
+        if exercise_intensities and statistics.mean(exercise_intensities) > 3.5:
             insights.append("🏃‍♀️ Exercise significantly improves your mood. Keep up the active lifestyle!")
+    
+    # Ensure we always return at least one insight
+    if not insights:
+        insights.append("📈 Keep tracking your moods to unlock personalized insights about your emotional patterns!")
     
     return insights[:5]  # Return top 5 insights
 
