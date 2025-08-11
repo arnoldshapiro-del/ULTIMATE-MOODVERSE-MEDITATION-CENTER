@@ -121,7 +121,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-green-500 to-emerald-500',
       defaultDuration: 8,
       phases: ['preparation', 'rhythm', 'deep_breathing', 'integration'],
-      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      videoSrc: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4',
       backgroundStyle: 'linear-gradient(45deg, #065f46, #059669, #10b981)',
       audioType: 'forest',
       guidedAudio: {
