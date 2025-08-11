@@ -50,6 +50,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginDemo = () => {
+    // Create a demo user for testing purposes
+    const demoUser = {
+      id: 'demo-user-123',
+      email: 'demo@moodverse.com',
+      full_name: 'Demo User',
+      preferences: {
+        theme: 'dark',
+        notifications: true
+      }
+    };
+    
+    // Set demo session token
+    localStorage.setItem('session_token', 'demo-token-123');
+    setUser(demoUser);
+    setIsAuthenticated(true);
+    console.log('Demo login successful');
+  };
+
   const login = () => {
     // Redirect to Emergent Auth with current URL as redirect
     const currentUrl = window.location.origin;
