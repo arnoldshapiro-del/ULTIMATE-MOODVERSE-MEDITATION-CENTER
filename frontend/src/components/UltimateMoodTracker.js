@@ -248,7 +248,7 @@ const crisisResources = [
 
 const UltimateMoodTracker = () => {
   // Authentication and user state
-  const { user, login, logout, isAuthenticated, loading: authLoading } = useContext(AuthContext);
+  const { user, login, loginDemo, logout, isAuthenticated, loading: authLoading } = useContext(AuthContext);
   
   // Authentication states
   const [authMode, setAuthMode] = useState('signin'); // 'signin', 'signup', 'forgot'
