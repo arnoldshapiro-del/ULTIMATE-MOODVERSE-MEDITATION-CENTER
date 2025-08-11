@@ -1171,7 +1171,7 @@ const UltimateMoodTracker = () => {
             
             <div className="text-center pt-4 border-t border-white/20">
               <p className="text-xs text-white/60 mb-3">
-                Secure authentication powered by Emergent
+                Secure authentication & data protection
               </p>
               <div className="flex items-center justify-center space-x-4 text-white/50">
                 <div className="flex items-center">
