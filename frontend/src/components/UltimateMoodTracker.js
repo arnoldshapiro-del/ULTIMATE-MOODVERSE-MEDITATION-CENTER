@@ -308,12 +308,110 @@ const UltimateMoodTracker = () => {
     });
   };
 
-  const handleInputChange = (field, value) => {
-    setAuthForm(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleGoogleOAuth = () => {
+    // Direct redirect to Google OAuth - no iframe issues
+    const currentUrl = window.location.origin;
+    const googleClientId = "688503902215-eahn559m4obup5e74gg6i1nkivplt5mi.apps.googleusercontent.com";
+    const redirectUri = encodeURIComponent(`${currentUrl}/auth/callback`);
+    const scope = encodeURIComponent("openid email profile");
+    const state = Math.random().toString(36).substring(2, 15);
+    
+    // Store state for security verification
+    localStorage.setItem('oauth_state', state);
+    
+    // Direct redirect to Google OAuth - bypasses all CORS/iframe issues
+    const googleAuthUrl = `https://accounts.google.com/oauth/v2/auth?` +
+      `client_id=${googleClientId}&` +
+      `redirect_uri=${redirectUri}&` +
+      `response_type=code&` +
+      `scope=${scope}&` +
+      `state=${state}&` +
+      `access_type=offline&` +
+      `prompt=consent`;
+    
+    console.log('Redirecting to Google OAuth:', googleAuthUrl);
+    window.location.href = googleAuthUrl;
   };
+
+  // Handle OAuth callback
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+      const error = urlParams.get('error');
+      
+      if (error) {
+        toast({
+          title: "Authentication Error",
+          description: error === 'access_denied' ? 'Access denied by user' : 'Authentication failed',
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (code && state) {
+        const storedState = localStorage.getItem('oauth_state');
+        
+        if (state !== storedState) {
+          toast({
+            title: "Security Error", 
+            description: "Invalid state parameter",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        try {
+          // Exchange code for token via your backend
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google-callback`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              code, 
+              redirect_uri: `${window.location.origin}/auth/callback` 
+            })
+          });
+          
+          if (response.ok) {
+            const authData = await response.json();
+            if (authData.success) {
+              localStorage.setItem('session_token', authData.session_token);
+              setLocalUser(authData.user);
+              setLocalIsAuthenticated(true);
+              
+              // Clean up URL
+              window.history.replaceState({}, document.title, '/');
+              
+              toast({
+                title: "Welcome to MoodVerse! ✨",
+                description: "Successfully signed in with Google",
+                className: "bg-gradient-to-r from-green-400 to-blue-500 text-white border-none"
+              });
+            }
+          } else {
+            throw new Error('Authentication failed');
+          }
+        } catch (error) {
+          console.error('OAuth callback error:', error);
+          toast({
+            title: "Error",
+            description: "Failed to complete Google authentication",
+            variant: "destructive"
+          });
+        }
+        
+        // Clean up
+        localStorage.removeItem('oauth_state');
+      }
+    };
+    
+    if (window.location.pathname === '/auth/callback' || window.location.search.includes('code=')) {
+      handleOAuthCallback();
+    }
+  }, []);
   const { notifications, addNotification } = useContext(NotificationContext);
   
   // Core mood tracking state
