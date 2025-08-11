@@ -807,6 +807,21 @@ const UltimateMoodTracker = () => {
     }
   }, [note]);
 
+  // Show loading screen while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+            ✨ MoodVerse ✨
+          </h1>
+          <p className="text-white/80 mt-2">Loading your emotional intelligence platform...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Render authentication screen if not logged in
   if (!isAuthenticated) {
     return (
