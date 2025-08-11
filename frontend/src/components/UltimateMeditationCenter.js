@@ -600,11 +600,20 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
             )}
 
             {/* Hidden Audio Elements */}
-            <audio
-              ref={audioRef}
-              loop
-              src={currentSound?.src || selectedMeditation.audioSrc}
-            />
+            {natureSounds.find(s => s.id === selectedSound)?.src && (
+              <audio
+                ref={audioRef}
+                loop
+                preload="metadata"
+                src={natureSounds.find(s => s.id === selectedSound)?.src}
+                onError={(e) => {
+                  console.warn('Audio failed to load, using generated audio');
+                }}
+                onLoadedData={() => {
+                  console.log('Audio loaded successfully');
+                }}
+              />
+            )}
 
             {/* Session Header */}
             <div className="text-center space-y-2">
