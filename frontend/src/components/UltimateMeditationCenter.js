@@ -674,7 +674,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               
               <Button
                 size="lg"
-                className={`${selectedMeditation.color} hover:opacity-90 text-white text-lg px-8 py-4`}
+                className={`bg-gradient-to-r ${selectedMeditation.color} hover:opacity-90 text-white text-lg px-8 py-4`}
                 onClick={togglePlayPause}
               >
                 {isPlaying ? (
@@ -688,7 +688,16 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 size="lg"
                 variant="outline"
                 className="border-white/30 text-white hover:bg-white/10"
-                onClick={() => setAudioEnabled(!audioEnabled)}
+                onClick={async () => {
+                  const newAudioState = !audioEnabled;
+                  setAudioEnabled(newAudioState);
+                  
+                  if (newAudioState && isPlaying) {
+                    await startAudio();
+                  } else if (!newAudioState) {
+                    stopAudio();
+                  }
+                }}
               >
                 {audioEnabled ? (
                   <Volume2 className="h-6 w-6" />
