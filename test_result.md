@@ -253,3 +253,5 @@ test_plan:
 agent_communication:
     - agent: "main"
     - message: "Ultimate MoodVerse implementation complete with all requested features. Using mock data for third-party services (AI, weather, file storage) since user doesn't have API keys. Need to test backend endpoints first, then frontend integration."
+    - agent: "testing"
+    - message: "Backend testing completed. CRITICAL ISSUE: Core mood entry functionality is broken (mood creation, retrieval, stats all failing with 500 errors). 60% of backend features working properly including user management, achievements, meditation, notifications. Main agent needs to fix mood entry database operations - likely async/await or data validation issue in mood CRUD endpoints. File upload endpoints have validation issues (422 errors). Friend request endpoint has business logic error (400). Recommend using websearch to research FastAPI + MongoDB async patterns for mood entry operations."
