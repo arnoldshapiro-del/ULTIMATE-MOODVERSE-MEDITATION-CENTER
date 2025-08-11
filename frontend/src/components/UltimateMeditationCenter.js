@@ -291,15 +291,27 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }, 1000);
   };
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const togglePlayPause = async () => {
+    const newPlayingState = !isPlaying;
+    setIsPlaying(newPlayingState);
     
     if (videoRef.current) {
-      if (!isPlaying) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
+      try {
+        if (newPlayingState) {
+          await videoRef.current.play();
+        } else {
+          videoRef.current.pause();
+        }
+      } catch (error) {
+        console.warn('Video toggle failed:', error);
       }
+    }
+    
+    // Handle audio
+    if (newPlayingState && audioEnabled) {
+      await startAudio();
+    } else if (!newPlayingState) {
+      stopAudio();
     }
   };
 
