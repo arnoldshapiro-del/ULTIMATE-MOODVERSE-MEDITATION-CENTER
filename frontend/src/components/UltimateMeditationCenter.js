@@ -713,7 +713,20 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 size="sm"
                 variant="ghost"
                 className="text-white hover:bg-white/10"
-                onClick={() => setShowVideo(!showVideo)}
+                onClick={async () => {
+                  const newVideoState = !showVideo;
+                  setShowVideo(newVideoState);
+                  
+                  if (newVideoState && isPlaying && videoRef.current) {
+                    try {
+                      await videoRef.current.play();
+                    } catch (error) {
+                      console.warn('Video toggle play failed:', error);
+                    }
+                  } else if (!newVideoState && videoRef.current) {
+                    videoRef.current.pause();
+                  }
+                }}
               >
                 {showVideo ? <Eye className="h-4 w-4 mr-2" /> : <EyeOff className="h-4 w-4 mr-2" />}
                 Video
@@ -723,7 +736,10 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 size="sm"
                 variant="ghost"
                 className="text-white hover:bg-white/10"
-                onClick={() => setSelectedMeditation(null)}
+                onClick={() => {
+                  resetSession();
+                  setSelectedMeditation(null);
+                }}
               >
                 Exit Session
               </Button>
