@@ -1800,6 +1800,217 @@ const UltimateMoodTracker = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Settings Modal */}
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="sm:max-w-2xl bg-black/90 backdrop-blur-xl border border-purple-400/50">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Settings className="h-6 w-6 text-purple-400" />
+              Settings
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-white font-semibold">Preferences</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-white">Dark Mode</Label>
+                  <Switch 
+                    checked={darkMode} 
+                    onCheckedChange={setDarkMode}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-white">Notifications</Label>
+                  <Switch defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-white">Sound Effects</Label>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-white font-semibold">Privacy</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-white">Profile Visibility</Label>
+                  <Select defaultValue="friends">
+                    <SelectTrigger className="w-32 bg-white/10 border-white/20 text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="public">Public</SelectItem>
+                      <SelectItem value="friends">Friends</SelectItem>
+                      <SelectItem value="private">Private</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowSettings(false)}
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => setShowSettings(false)}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Save Settings
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Profile Modal */}
+      <Dialog open={showProfile} onOpenChange={setShowProfile}>
+        <DialogContent className="sm:max-w-2xl bg-black/90 backdrop-blur-xl border border-purple-400/50">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <User className="h-6 w-6 text-purple-400" />
+              User Profile
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={user?.avatar} />
+                <AvatarFallback className="text-2xl">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="text-white text-xl font-bold">{user?.name || 'Demo User'}</h3>
+                <p className="text-white/60">{user?.email || 'demo@moodverse.app'}</p>
+                <p className="text-white/60 text-sm">Joined: {user?.joinDate ? new Date(user.joinDate).toLocaleDateString() : 'Today'}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-white/10 rounded-lg">
+                <div className="text-2xl font-bold text-yellow-400">{userLevel}</div>
+                <div className="text-white/80 text-sm">Current Level</div>
+              </div>
+              <div className="p-4 bg-white/10 rounded-lg">
+                <div className="text-2xl font-bold text-blue-400">{experience}</div>
+                <div className="text-white/80 text-sm">Total XP</div>
+              </div>
+              <div className="p-4 bg-white/10 rounded-lg">
+                <div className="text-2xl font-bold text-orange-400">{streak}</div>
+                <div className="text-white/80 text-sm">Day Streak</div>
+              </div>
+              <div className="p-4 bg-white/10 rounded-lg">
+                <div className="text-2xl font-bold text-pink-400">{moodHistory.length}</div>
+                <div className="text-white/80 text-sm">Total Moods</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowProfile(false)}
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={logout}
+                variant="outline"
+                className="border-red-400/50 text-red-400 hover:bg-red-400/10"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Friends Modal */}
+      <Dialog open={showFriends} onOpenChange={setShowFriends}>
+        <DialogContent className="sm:max-w-2xl bg-black/90 backdrop-blur-xl border border-purple-400/50">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Users className="h-6 w-6 text-purple-400" />
+              Friends & Social
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="flex gap-3">
+              <Button 
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                onClick={() => toast({
+                  title: "Add Friend",
+                  description: "Friend search feature coming soon!",
+                  className: "bg-gradient-to-r from-blue-400 to-purple-500 text-white border-none"
+                })}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Friend
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+                onClick={() => toast({
+                  title: "Invite Friends",
+                  description: "Share MoodVerse with your friends!",
+                  className: "bg-gradient-to-r from-green-400 to-blue-500 text-white border-none"
+                })}
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                Invite
+              </Button>
+            </div>
+            
+            <div className="space-y-3">
+              <h3 className="text-white font-semibold">Your Friends ({friends.length})</h3>
+              {friends.length > 0 ? (
+                <div className="space-y-3">
+                  {friends.map((friend) => (
+                    <div key={friend.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={friend.avatar} />
+                          <AvatarFallback>{friend.name?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-white font-medium">{friend.name}</div>
+                          <div className="text-white/60 text-sm">{friend.lastMood} • {friend.lastSeen}</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-white/60">
+                  <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No friends added yet</p>
+                  <p className="text-sm">Start building your support network!</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowFriends(false)}
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
