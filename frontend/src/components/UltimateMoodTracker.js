@@ -247,7 +247,7 @@ const crisisResources = [
 
 const UltimateMoodTracker = () => {
   // Authentication and user state
-  const { user, login, logout, isAuthenticated } = useContext(AuthContext);
+  const { user, login, logout, isAuthenticated, loading } = useContext(AuthContext);
   const { notifications, addNotification } = useContext(NotificationContext);
   
   // Core mood tracking state
