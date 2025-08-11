@@ -308,6 +308,13 @@ const UltimateMoodTracker = () => {
     });
   };
 
+  const handleInputChange = (field, value) => {
+    setAuthForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const handleGoogleOAuth = () => {
     // Direct redirect to Google OAuth - no iframe issues
     const currentUrl = window.location.origin;
