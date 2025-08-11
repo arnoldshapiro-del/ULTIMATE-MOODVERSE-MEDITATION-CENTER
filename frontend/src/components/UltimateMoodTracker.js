@@ -1693,23 +1693,24 @@ const UltimateMoodTracker = () => {
                 </Button>
                 
                 <div className="grid md:grid-cols-2 gap-4">
-                {meditationTechniques.map((technique) => (
-                  <div key={technique.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <h4 className="font-semibold text-white mb-2">{technique.name}</h4>
-                    <p className="text-white/70 text-sm mb-3">{technique.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/60 text-sm">{Math.floor(technique.duration / 60)} min</span>
-                      <Button 
-                        size="sm"
-                        onClick={() => startMeditation(technique)}
-                        className="bg-purple-600 hover:bg-purple-700"
-                      >
-                        <Play className="h-4 w-4 mr-1" />
-                        Start
-                      </Button>
+                  {meditationTechniques.map((technique) => (
+                    <div key={technique.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
+                      <h4 className="font-semibold text-white mb-2">{technique.name}</h4>
+                      <p className="text-white/70 text-sm mb-3">{technique.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-white/60 text-sm">{Math.floor(technique.duration / 60)} min</span>
+                        <Button 
+                          size="sm"
+                          onClick={() => startMeditation(technique)}
+                          className="bg-purple-600 hover:bg-purple-700"
+                        >
+                          <Play className="h-4 w-4 mr-1" />
+                          Start
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
