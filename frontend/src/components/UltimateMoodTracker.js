@@ -246,6 +246,9 @@ const crisisResources = [
 ];
 
 const UltimateMoodTracker = () => {
+  // Authentication and user state
+  const { user, login, logout, isAuthenticated, loading: authLoading } = useContext(AuthContext);
+  
   // Authentication states
   const [authMode, setAuthMode] = useState('signin'); // 'signin', 'signup', 'forgot'
   const [authForm, setAuthForm] = useState({
@@ -254,6 +257,10 @@ const UltimateMoodTracker = () => {
     password: '',
     confirmPassword: ''
   });
+  
+  // Local user state for manual auth
+  const [localUser, setLocalUser] = useState(user);
+  const [localIsAuthenticated, setLocalIsAuthenticated] = useState(isAuthenticated);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -289,8 +296,8 @@ const UltimateMoodTracker = () => {
     };
     
     localStorage.setItem('session_token', 'demo_token_' + Date.now());
-    setUser(userData);
-    setIsAuthenticated(true);
+    setLocalUser(userData);
+    setLocalIsAuthenticated(true);
     
     toast({
       title: `Welcome${authMode === 'signup' ? ' to MoodVerse' : ' back'}! ✨`,
