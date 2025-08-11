@@ -1197,6 +1197,15 @@ const UltimateMoodTracker = () => {
               Google
             </Button>
             
+            <Button 
+              onClick={() => loginDemo()}
+              variant="outline"
+              className="w-full border-yellow-400/50 text-yellow-300 hover:bg-yellow-400/10 mt-3"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Try Demo (No Registration Required)
+            </Button>
+            
             <div className="text-center pt-4 border-t border-white/20">
               <p className="text-xs text-white/60 mb-3">
                 Secure authentication & data protection
