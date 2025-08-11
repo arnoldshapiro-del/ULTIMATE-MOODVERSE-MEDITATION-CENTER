@@ -584,70 +584,45 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         ) : (
           // Active Meditation Session
           <div className="space-y-6 relative h-full">
-            {/* Background Video */}
-            {showVideo && selectedMeditation && (
-              <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover opacity-30"
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  src={selectedMeditation.videoSrc}
-                  onError={(e) => {
-                    console.warn('Video failed to load:', selectedMeditation.videoSrc);
-                    setShowVideo(false);
-                  }}
-                  onLoadedData={() => {
-                    console.log('Video loaded successfully:', selectedMeditation.videoSrc);
-                  }}
-                />
-                {/* CSS Gradient Fallback */}
-                <div 
-                  className="absolute inset-0 opacity-50"
-                  style={{ background: selectedMeditation.backgroundStyle }}
-                />
-              </div>
-            )}
-
-            {/* CSS Background when video is disabled */}
-            {!showVideo && (
-              <div 
-                className="absolute inset-0 -z-10 rounded-lg"
-                style={{ 
-                  background: selectedMeditation.backgroundStyle,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
-              />
-            )}
-
-            {/* Audio Elements */}
-            {natureSounds.find(s => s.id === selectedSound)?.src && (
-              <audio
-                ref={audioRef}
+            {/* Background Video - ALWAYS RENDER FOR DEBUGGING */}
+            <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover opacity-30"
                 loop
+                muted
+                playsInline
                 preload="metadata"
-                src={natureSounds.find(s => s.id === selectedSound)?.src}
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
                 onError={(e) => {
-                  console.warn('Audio failed to load:', natureSounds.find(s => s.id === selectedSound)?.src);
+                  console.warn('Video failed to load:', e.target.src);
                 }}
                 onLoadedData={() => {
-                  console.log('Audio loaded successfully:', natureSounds.find(s => s.id === selectedSound)?.src);
+                  console.log('Video loaded successfully:', e.target.src);
                 }}
               />
-            )}
-            
-            {/* Debug Info - Remove in production */}
-            {selectedMeditation && (
-              <div className="hidden">
-                Debug: selectedMeditation={selectedMeditation.title}, 
-                showVideo={showVideo.toString()}, 
-                videoSrc={selectedMeditation.videoSrc}, 
-                selectedSound={selectedSound}
-              </div>
-            )}
+              {/* CSS Gradient Fallback */}
+              <div 
+                className="absolute inset-0 opacity-50"
+                style={{ 
+                  background: selectedMeditation?.backgroundStyle || 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)'
+                }}
+              />
+            </div>
+
+            {/* Audio Element - ALWAYS RENDER FOR DEBUGGING */}
+            <audio
+              ref={audioRef}
+              loop
+              preload="metadata"
+              src="https://samplelib.com/lib/preview/mp3/sample-15s.mp3"
+              onError={(e) => {
+                console.warn('Audio failed to load:', e.target.src);
+              }}
+              onLoadedData={() => {
+                console.log('Audio loaded successfully:', e.target.src);
+              }}
+            />
 
             {/* Session Header */}
             <div className="text-center space-y-2">
