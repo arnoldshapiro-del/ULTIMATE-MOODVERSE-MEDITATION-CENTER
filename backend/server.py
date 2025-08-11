@@ -669,8 +669,9 @@ async def get_friends(authorization: str = Header(None)):
     return [Friend(**friend) for friend in friends]
 
 @api_router.post("/friends/request")
-async def send_friend_request(request_data: dict, user_id: str = "demo_user"):
+async def send_friend_request(request_data: dict, authorization: str = Header(None)):
     """Send friend request"""
+    user_id = await get_authenticated_user_id(authorization)
     try:
         target_user_id = request_data.get('target_user_id')
         if not target_user_id:
