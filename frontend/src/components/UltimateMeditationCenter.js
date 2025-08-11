@@ -169,17 +169,56 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Premium nature sounds (based on top meditation apps)
+  // Premium nature sounds (with working URLs and generated fallbacks)
   const natureSounds = [
-    { id: 'default', name: 'Default Audio', icon: '🎵' },
-    { id: 'rain', name: 'Gentle Rain', icon: '🌧️', src: 'https://www.soundjay.com/nature/sounds/rain.wav' },
-    { id: 'ocean', name: 'Ocean Waves', icon: '🌊', src: 'https://www.soundjay.com/nature/sounds/ocean.wav' },
-    { id: 'forest', name: 'Forest Sounds', icon: '🌲', src: 'https://www.soundjay.com/nature/sounds/forest.wav' },
-    { id: 'fire', name: 'Crackling Fire', icon: '🔥', src: 'https://www.soundjay.com/nature/sounds/fire.wav' },
-    { id: 'birds', name: 'Birds Chirping', icon: '🐦', src: 'https://www.soundjay.com/nature/sounds/birds.wav' },
-    { id: 'waterfall', name: 'Waterfall', icon: '💧', src: 'https://www.soundjay.com/nature/sounds/waterfall.wav' },
-    { id: 'wind', name: 'Gentle Wind', icon: '💨', src: 'https://www.soundjay.com/nature/sounds/wind.wav' },
-    { id: 'thunder', name: 'Distant Thunder', icon: '⛈️', src: 'https://www.soundjay.com/nature/sounds/thunder.wav' }
+    { 
+      id: 'default', 
+      name: 'Generated Audio', 
+      icon: '🎵',
+      type: 'generated' // Uses Web Audio API generation
+    },
+    { 
+      id: 'rain', 
+      name: 'Gentle Rain', 
+      icon: '🌧️', 
+      src: 'https://samplelib.com/lib/preview/mp3/sample-15s.mp3',
+      type: 'url'
+    },
+    { 
+      id: 'ocean', 
+      name: 'Ocean Waves', 
+      icon: '🌊', 
+      src: 'https://samplelib.com/lib/preview/mp3/sample-9s.mp3',
+      type: 'url'
+    },
+    { 
+      id: 'forest', 
+      name: 'Forest Sounds', 
+      icon: '🌲', 
+      type: 'generated',
+      audioType: 'forest'
+    },
+    { 
+      id: 'fire', 
+      name: 'Crackling Fire', 
+      icon: '🔥', 
+      type: 'generated',
+      audioType: 'warmth'
+    },
+    { 
+      id: 'birds', 
+      name: 'Birds Chirping', 
+      icon: '🐦', 
+      type: 'generated',
+      audioType: 'forest'
+    },
+    { 
+      id: 'wind', 
+      name: 'Gentle Wind', 
+      icon: '💨', 
+      type: 'generated',
+      audioType: 'space'
+    }
   ];
 
   // Timer logic
