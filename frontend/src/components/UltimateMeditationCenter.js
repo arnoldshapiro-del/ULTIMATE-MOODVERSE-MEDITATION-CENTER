@@ -320,14 +320,18 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     setTimeRemaining(duration * 60);
     setCurrentPhase('preparation');
     
+    // Reset video
     if (videoRef.current) {
-      videoRef.current.currentTime = 0;
       videoRef.current.pause();
+      videoRef.current.currentTime = 0;
     }
     
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    // Stop all audio
+    stopAudio();
+    
+    // Stop speech synthesis
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
     }
   };
 
