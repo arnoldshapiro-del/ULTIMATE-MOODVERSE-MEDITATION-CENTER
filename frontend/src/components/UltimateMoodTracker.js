@@ -736,6 +736,62 @@ const UltimateMoodTracker = () => {
     setTimeout(() => setParticleEffect(null), 3000);
   };
 
+  const getMoodForDate = (date) => {
+    const entry = moodHistory.find(entry => entry.date === date);
+    return entry ? entry.mood : null;
+  };
+
+  const generateCalendarDays = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days = [];
+    const currentDate = new Date(startDate);
+    
+    for (let i = 0; i < 42; i++) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const isCurrentMonth = currentDate.getMonth() === currentMonth;
+      
+      days.push({
+        date: isCurrentMonth ? dateStr : null,
+        day: currentDate.getDate(),
+        mood: isCurrentMonth ? getMoodForDate(dateStr) : null
+      });
+      
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return days;
+  };
+
+  const getMoodTrendData = () => {
+    const days = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+      
+      const entry = moodHistory.find(entry => entry.date === dateStr);
+      days.push({
+        date: dateStr,
+        dayName,
+        mood: entry?.mood || null,
+        intensity: entry?.intensity || 0
+      });
+    }
+    
+    return days;
+  };
+
   // Crisis support detection
   const checkForCrisisKeywords = (text) => {
     const crisisKeywords = ['suicide', 'kill', 'die', 'hurt', 'hopeless', 'worthless', 'end it all'];
