@@ -731,6 +731,11 @@ const UltimateMoodTracker = () => {
     });
   };
 
+  const triggerParticleEffect = (mood) => {
+    setParticleEffect({ mood, trigger: Date.now() });
+    setTimeout(() => setParticleEffect(null), 3000);
+  };
+
   // Crisis support detection
   const checkForCrisisKeywords = (text) => {
     const crisisKeywords = ['suicide', 'kill', 'die', 'hurt', 'hopeless', 'worthless', 'end it all'];
