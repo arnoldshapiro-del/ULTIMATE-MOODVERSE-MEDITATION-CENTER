@@ -314,7 +314,9 @@ async def create_mood_entry(mood_data: MoodEntryCreate, user_id: str = "demo_use
         # Create new entry
         mood_entry_dict = mood_data.dict()
         mood_entry_dict['user_id'] = user_id
-        if not mood_entry_dict.get('timestamp'):
+        
+        # Ensure timestamp is set
+        if mood_entry_dict.get('timestamp') is None:
             mood_entry_dict['timestamp'] = datetime.utcnow()
         
         mood_entry = MoodEntry(**mood_entry_dict)
