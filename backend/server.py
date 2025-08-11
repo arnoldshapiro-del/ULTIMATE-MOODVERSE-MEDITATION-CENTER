@@ -418,6 +418,9 @@ async def get_comprehensive_mood_stats(user_id: str = "demo_user"):
     activity_correlation = {}
     
     for entry in entries:
+        if entry is None:
+            continue
+            
         mood_label = MOODS.get(entry['mood_id'], {}).get('label', entry['mood_id'])
         mood_counts[mood_label] = mood_counts.get(mood_label, 0) + 1
         
@@ -425,18 +428,21 @@ async def get_comprehensive_mood_stats(user_id: str = "demo_user"):
         mood_distribution[category] += 1
         
         # Weather correlation
-        if entry.get('weather', {}).get('condition'):
-            weather = entry['weather']['condition']
+        weather_data = entry.get('weather')
+        if weather_data and isinstance(weather_data, dict) and weather_data.get('condition'):
+            weather = weather_data['condition']
             if weather not in weather_correlation:
                 weather_correlation[weather] = {'positive': 0, 'neutral': 0, 'negative': 0}
             weather_correlation[weather][category] += 1
         
         # Activity correlation
-        for tag in entry.get('tags', []):
-            if tag not in activity_correlation:
-                activity_correlation[tag] = {'count': 0, 'avg_intensity': 0, 'moods': []}
-            activity_correlation[tag]['count'] += 1
-            activity_correlation[tag]['moods'].append(entry.get('intensity', 3))
+        tags = entry.get('tags', [])
+        if tags and isinstance(tags, list):
+            for tag in tags:
+                if tag not in activity_correlation:
+                    activity_correlation[tag] = {'count': 0, 'avg_intensity': 0, 'moods': []}
+                activity_correlation[tag]['count'] += 1
+                activity_correlation[tag]['moods'].append(entry.get('intensity', 3))
     
     # Calculate averages
     for activity in activity_correlation:
