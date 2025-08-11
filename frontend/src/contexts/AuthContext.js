@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
@@ -12,140 +12,122 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
-    const savedUser = localStorage.getItem('moodverse_user');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    checkAuthStatus();
   }, []);
 
-  const login = async (credentials) => {
+  const checkAuthStatus = async () => {
     try {
-      // In demo mode, create a mock user
-      const demoUser = {
-        id: 'demo_user_123',
-        name: 'Demo User',
-        email: 'demo@moodverse.app',
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=demo`,
-        joinDate: new Date().toISOString(),
-        preferences: {
-          theme: 'cosmic',
-          notifications: true,
-          privacy: 'friends',
-          dataSharing: false
-        },
-        stats: {
-          totalEntries: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          level: 1,
-          experience: 0,
-          achievementsUnlocked: 0
-        }
-      };
+      const sessionToken = localStorage.getItem('session_token');
+      if (sessionToken) {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/user`, {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-      setUser(demoUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('moodverse_user', JSON.stringify(demoUser));
-      
-      return { success: true, user: demoUser };
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+          setIsAuthenticated(true);
+        } else {
+          // Session expired or invalid
+          localStorage.removeItem('session_token');
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      }
     } catch (error) {
-      console.error('Login failed:', error);
-      return { success: false, error: error.message };
+      console.error('Auth check failed:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const register = async (userData) => {
-    try {
-      // In a real app, this would call your registration API
-      const newUser = {
-        id: `user_${Date.now()}`,
-        name: userData.name,
-        email: userData.email,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.email}`,
-        joinDate: new Date().toISOString(),
-        preferences: {
-          theme: 'cosmic',
-          notifications: true,
-          privacy: 'friends',
-          dataSharing: false
-        },
-        stats: {
-          totalEntries: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          level: 1,
-          experience: 0,
-          achievementsUnlocked: 0
-        }
-      };
+  const login = () => {
+    // Redirect to Emergent Auth with current URL as redirect
+    const currentUrl = window.location.origin;
+    const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(currentUrl)}`;
+    window.location.href = authUrl;
+  };
 
-      setUser(newUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('moodverse_user', JSON.stringify(newUser));
-      
-      return { success: true, user: newUser };
+  const logout = async () => {
+    try {
+      const sessionToken = localStorage.getItem('session_token');
+      if (sessionToken) {
+        await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ session_token: sessionToken })
+        });
+      }
     } catch (error) {
-      console.error('Registration failed:', error);
-      return { success: false, error: error.message };
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('session_token');
+      setUser(null);
+      setIsAuthenticated(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('moodverse_user');
-    localStorage.removeItem('moodverse_data');
-  };
+  // Handle auth callback from Emergent
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+      const hash = window.location.hash;
+      const sessionIdMatch = hash.match(/session_id=([^&]*)/);
+      
+      if (sessionIdMatch) {
+        const sessionId = sessionIdMatch[1];
+        
+        try {
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ session_id: sessionId })
+          });
 
-  const updateUser = (updates) => {
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    localStorage.setItem('moodverse_user', JSON.stringify(updatedUser));
-  };
-
-  const updatePreferences = (preferences) => {
-    const updatedUser = {
-      ...user,
-      preferences: { ...user.preferences, ...preferences }
+          if (response.ok) {
+            const authData = await response.json();
+            if (authData.success) {
+              localStorage.setItem('session_token', authData.session_token);
+              setUser(authData.user);
+              setIsAuthenticated(true);
+              
+              // Clear the hash from URL
+              window.location.hash = '';
+            }
+          }
+        } catch (error) {
+          console.error('Auth callback error:', error);
+        }
+        
+        setLoading(false);
+      }
     };
-    setUser(updatedUser);
-    localStorage.setItem('moodverse_user', JSON.stringify(updatedUser));
-  };
 
-  const updateStats = (stats) => {
-    const updatedUser = {
-      ...user,
-      stats: { ...user.stats, ...stats }
-    };
-    setUser(updatedUser);
-    localStorage.setItem('moodverse_user', JSON.stringify(updatedUser));
-  };
+    handleAuthCallback();
+  }, []);
 
   const value = {
     user,
+    login,
+    logout,
     isAuthenticated,
     loading,
-    login,
-    register,
-    logout,
-    updateUser,
-    updatePreferences,
-    updateStats
+    checkAuthStatus
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext };
