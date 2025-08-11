@@ -309,6 +309,36 @@ const UltimateMoodTracker = () => {
     });
   };
 
+  // Initialize authentication state
+  useEffect(() => {
+    const savedToken = localStorage.getItem('session_token');
+    const savedUser = localStorage.getItem('moodverse_user');
+    
+    if (savedToken && savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setLocalUser(userData);
+        setLocalIsAuthenticated(true);
+      } catch (error) {
+        console.error('Failed to parse saved user data:', error);
+        localStorage.removeItem('session_token');
+        localStorage.removeItem('moodverse_user');
+      }
+    } else if (savedToken) {
+      // If we have a token but no user data, create default user
+      const defaultUser = {
+        id: 'user_' + Date.now(),
+        name: 'User',
+        email: 'user@moodverse.app',
+        picture: '',
+        joinDate: new Date().toISOString()
+      };
+      setLocalUser(defaultUser);
+      setLocalIsAuthenticated(true);
+      localStorage.setItem('moodverse_user', JSON.stringify(defaultUser));
+    }
+  }, []);
+
   const handleInputChange = (field, value) => {
     setAuthForm(prev => ({
       ...prev,
