@@ -1155,7 +1155,7 @@ const UltimateMoodTracker = () => {
             </div>
             
             <Button 
-              onClick={login}
+              onClick={handleGoogleOAuth}
               className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700"
             >
               <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
