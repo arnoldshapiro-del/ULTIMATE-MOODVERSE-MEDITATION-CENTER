@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
-import EnhancedMoodTracker from "./components/EnhancedMoodTracker";
+import UltimateMoodTracker from "./components/UltimateMoodTracker";
 import { Toaster } from "./components/ui/toaster";
+import { AuthProvider } from "./contexts/AuthContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -28,13 +30,17 @@ const TestConnection = () => {
 function App() {
   return (
     <div className="App">
-      <TestConnection />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<EnhancedMoodTracker />} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster />
+      <AuthProvider>
+        <NotificationProvider>
+          <TestConnection />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<UltimateMoodTracker />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </NotificationProvider>
+      </AuthProvider>
     </div>
   );
 }
