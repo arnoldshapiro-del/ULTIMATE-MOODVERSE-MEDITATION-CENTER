@@ -358,6 +358,7 @@ const UltimateMoodTracker = () => {
     };
     
     localStorage.setItem('session_token', 'google_token_' + Date.now());
+    localStorage.setItem('moodverse_user', JSON.stringify(simulatedGoogleUser));
     setLocalUser(simulatedGoogleUser);
     setLocalIsAuthenticated(true);
     
