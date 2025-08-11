@@ -619,7 +619,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               onError={(e) => {
                 console.warn('Audio failed to load:', e.target.src);
               }}
-              onLoadedData={() => {
+              onLoadedData={(e) => {
                 console.log('Audio loaded successfully:', e.target.src);
               }}
             />
