@@ -151,7 +151,19 @@ class MeditationSession(BaseModel):
     notes: str = ""
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-class WeeklyReport(BaseModel):
+class UserSession(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    session_token: str
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
+
+class LoginResponse(BaseModel):
+    success: bool
+    user: Optional[dict] = None
+    session_token: Optional[str] = None
+    message: str = "Login successful"
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     week_start: str  # YYYY-MM-DD
