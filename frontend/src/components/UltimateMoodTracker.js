@@ -332,30 +332,30 @@ const UltimateMoodTracker = () => {
     try {
       setLoading(true);
       
-      // Load all user data
-      const [moodData, statsData, friendsData, achievementsData] = await Promise.all([
+      // Load all user data with individual error handling
+      const [moodData, statsData, friendsData, achievementsData] = await Promise.allSettled([
         moodApi.getMoodEntries(),
         moodApi.getMoodStats(),
         moodApi.getFriends(),
         moodApi.getAchievements()
       ]);
       
-      setMoodHistory(moodData);
-      setStats(statsData);
-      setFriends(friendsData);
-      setUserAchievements(achievementsData);
+      // Handle results and set data with fallbacks
+      setMoodHistory(moodData.status === 'fulfilled' ? moodData.value : []);
+      setStats(statsData.status === 'fulfilled' ? statsData.value : null);
+      setFriends(friendsData.status === 'fulfilled' ? friendsData.value : []);
+      setUserAchievements(achievementsData.status === 'fulfilled' ? achievementsData.value : defaultAchievements);
       
-      calculateStreak(moodData);
-      calculateExperience(moodData);
+      // Use the data that was successfully loaded
+      const validMoodData = moodData.status === 'fulfilled' ? moodData.value : [];
+      calculateStreak(validMoodData);
+      calculateExperience(validMoodData);
       generateMusicRecommendation();
       
     } catch (err) {
-      setError(err.message);
-      toast({
-        title: "Error",
-        description: "Failed to load user data",
-        variant: "destructive"
-      });
+      console.warn('Some data failed to load, using defaults:', err.message);
+      // Don't show error toast since we have fallbacks
+      setError(null);
     } finally {
       setLoading(false);
     }
