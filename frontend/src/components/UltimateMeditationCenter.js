@@ -413,13 +413,20 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   };
 
   const onSessionComplete = () => {
+    // Stop all media
+    stopAudio();
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+    
+    // Play completion message
     if (audioEnabled && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance('Your meditation session is complete. Take a moment to appreciate the peace you\'ve cultivated.');
       utterance.rate = 0.8;
       speechSynthesis.speak(utterance);
     }
     
-    // Reset to program selection
+    // Reset to program selection after completion message
     setTimeout(() => {
       setSelectedMeditation(null);
       setCurrentPhase('preparation');
