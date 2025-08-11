@@ -157,7 +157,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-purple-500 to-indigo-500',
       defaultDuration: 15,
       phases: ['preparation', 'scanning', 'release', 'integration'],
-      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+      videoSrc: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_10mb.mp4',
       backgroundStyle: 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)',
       audioType: 'space',
       guidedAudio: {
