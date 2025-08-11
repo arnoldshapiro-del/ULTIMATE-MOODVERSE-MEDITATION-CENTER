@@ -623,7 +623,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               />
             )}
 
-            {/* Hidden Audio Elements */}
+            {/* Audio Elements */}
             {natureSounds.find(s => s.id === selectedSound)?.src && (
               <audio
                 ref={audioRef}
@@ -631,12 +631,22 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 preload="metadata"
                 src={natureSounds.find(s => s.id === selectedSound)?.src}
                 onError={(e) => {
-                  console.warn('Audio failed to load, using generated audio');
+                  console.warn('Audio failed to load:', natureSounds.find(s => s.id === selectedSound)?.src);
                 }}
                 onLoadedData={() => {
-                  console.log('Audio loaded successfully');
+                  console.log('Audio loaded successfully:', natureSounds.find(s => s.id === selectedSound)?.src);
                 }}
               />
+            )}
+            
+            {/* Debug Info - Remove in production */}
+            {selectedMeditation && (
+              <div className="hidden">
+                Debug: selectedMeditation={selectedMeditation.title}, 
+                showVideo={showVideo.toString()}, 
+                videoSrc={selectedMeditation.videoSrc}, 
+                selectedSound={selectedSound}
+              </div>
             )}
 
             {/* Session Header */}
