@@ -286,6 +286,98 @@ async def check_and_unlock_achievements(user_id: str):
     
     return unlocked
 
+@api_router.post("/auth/google-callback")
+async def google_oauth_callback(request_data: dict):
+    """Handle Google OAuth callback"""
+    try:
+        code = request_data.get('code')
+        redirect_uri = request_data.get('redirect_uri')
+        
+        if not code:
+            return {"success": False, "message": "Authorization code required"}
+        
+        # Exchange code for access token
+        token_url = "https://oauth2.googleapis.com/token"
+        token_data = {
+            "client_id": "688503902215-eahn559m4obup5e74gg6i1nkivplt5mi.apps.googleusercontent.com",
+            "client_secret": "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",  # This should be in env vars
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.post(token_url, data=token_data) as response:
+                if response.status != 200:
+                    return {"success": False, "message": "Failed to exchange code for token"}
+                
+                token_response = await response.json()
+                access_token = token_response.get('access_token')
+                
+                if not access_token:
+                    return {"success": False, "message": "No access token received"}
+        
+        # Get user info from Google
+        user_info_url = f"https://www.googleapis.com/oauth2/v2/userinfo?access_token={access_token}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(user_info_url) as response:
+                if response.status != 200:
+                    return {"success": False, "message": "Failed to get user info"}
+                
+                user_data = await response.json()
+        
+        # Check if user exists or create new one
+        existing_user = await db.users.find_one({"email": user_data["email"]})
+        
+        if not existing_user:
+            # Create new user
+            user_doc = {
+                "id": user_data["id"],
+                "email": user_data["email"],
+                "name": user_data["name"],
+                "picture": user_data.get("picture", ""),
+                "created_at": datetime.utcnow(),
+                "preferences": {"theme": "dark", "notifications": True},
+                "profile_stats": {
+                    "total_moods": 0,
+                    "current_streak": 0,
+                    "level": 1,
+                    "experience": 0
+                }
+            }
+            await db.users.insert_one(user_doc)
+            user_id = user_data["id"]
+        else:
+            user_id = existing_user["id"]
+        
+        # Create session token
+        session_token = hashlib.sha256(f"{user_id}_{datetime.utcnow()}_{uuid.uuid4()}".encode()).hexdigest()
+        session_doc = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "session_token": session_token,
+            "expires_at": datetime.utcnow() + timedelta(days=7),
+            "created_at": datetime.utcnow(),
+            "is_active": True
+        }
+        await db.user_sessions.insert_one(session_doc)
+        
+        return {
+            "success": True,
+            "user": {
+                "id": user_id,
+                "email": user_data["email"],
+                "name": user_data["name"],
+                "picture": user_data.get("picture", "")
+            },
+            "session_token": session_token
+        }
+        
+    except Exception as e:
+        logger.error(f"Google OAuth callback error: {str(e)}")
+        return {"success": False, "message": "Authentication failed"}
+
 # Authentication endpoints
 @api_router.post("/auth/session", response_model=LoginResponse)
 async def authenticate_session(request_data: dict):
