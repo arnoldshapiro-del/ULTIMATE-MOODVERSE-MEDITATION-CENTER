@@ -275,9 +275,10 @@ class UltimateMoodVerseAPITester:
         """Test friend requests and social feed functionality"""
         print("\n👥 Testing Social Features...")
         
-        # Test friend request
+        # Test friend request with proper JSON data
+        friend_request_data = {'target_user_id': 'friend_user_123'}
         response = self.make_request('POST', '/friends/request', 
-                                   params={'target_user_id': 'friend_user_123', 'user_id': self.test_user_id})
+                                   friend_request_data, {'user_id': self.test_user_id})
         
         if response['success']:
             self.log_result("Send friend request", True, "Friend request sent successfully")
