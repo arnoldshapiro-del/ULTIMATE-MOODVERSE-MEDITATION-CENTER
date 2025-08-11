@@ -2399,6 +2399,12 @@ const UltimateMoodTracker = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Ultimate Meditation Center */}
+      <UltimateMeditationCenter 
+        isOpen={showMeditationCenter} 
+        onClose={() => setShowMeditationCenter(false)} 
+      />
     </div>
   );
 };
