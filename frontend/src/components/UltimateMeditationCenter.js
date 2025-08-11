@@ -259,21 +259,36 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   }, [timeRemaining, selectedMeditation, duration, currentPhase]);
 
-  const startMeditation = (program) => {
+  const startMeditation = async (program) => {
     setSelectedMeditation(program);
     setTimeRemaining(duration * 60);
     setCurrentPhase('preparation');
     setIsPlaying(true);
     
-    // Start video if enabled
+    // Handle video playback
     if (showVideo && videoRef.current) {
-      videoRef.current.play();
+      try {
+        // Ensure video is loaded
+        videoRef.current.load();
+        // Try to play video (muted initially to bypass autoplay restrictions)
+        await videoRef.current.play();
+        console.log('Video started successfully');
+      } catch (error) {
+        console.warn('Video autoplay failed:', error);
+        // Fallback: Use CSS background instead
+        setShowVideo(false);
+      }
     }
     
-    // Start audio if enabled
+    // Handle audio playback
     if (audioEnabled) {
-      playAudio();
+      await startAudio();
     }
+    
+    // Start guided audio after a brief delay
+    setTimeout(() => {
+      playGuidedAudio('preparation');
+    }, 1000);
   };
 
   const togglePlayPause = () => {
