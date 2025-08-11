@@ -541,12 +541,13 @@ async def create_mood_entry(mood_data: MoodEntryCreate, authorization: str = Hea
 
 @api_router.get("/moods", response_model=List[MoodEntry])
 async def get_mood_entries(
-    user_id: str = "demo_user",
+    authorization: str = Header(None),
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     limit: int = 100
 ):
     """Get enhanced mood entries with all features"""
+    user_id = await get_authenticated_user_id(authorization)
     query = {'user_id': user_id}
     
     if start_date or end_date:
