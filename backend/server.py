@@ -277,77 +277,89 @@ async def get_user(user_id: str):
 @api_router.post("/moods", response_model=MoodEntry)
 async def create_mood_entry(mood_data: MoodEntryCreate, user_id: str = "demo_user"):
     """Create comprehensive mood entry with all features"""
-    # Validate mood_id
-    if mood_data.mood_id not in MOODS:
-        # Check if it's a custom mood
-        custom_mood = await db.custom_moods.find_one({'id': mood_data.mood_id, 'user_id': user_id})
-        if not custom_mood:
-            raise HTTPException(status_code=400, detail="Invalid mood_id")
-    
-    # Check for crisis keywords
-    if await check_crisis_keywords(mood_data.note):
-        # Create crisis notification
-        crisis_notification = Notification(
-            user_id=user_id,
-            type="crisis_support",
-            title="Support Available",
-            body="We noticed you might need support. Help is available 24/7.",
-            priority="urgent"
-        )
-        await db.notifications.insert_one(crisis_notification.dict())
-    
-    # Check if entry exists for this date
-    existing_entry = await db.mood_entries.find_one({'user_id': user_id, 'date': mood_data.date})
-    
-    if existing_entry:
-        # Update existing entry
-        update_data = mood_data.dict()
-        update_data['updated_at'] = datetime.utcnow()
+    try:
+        # Validate mood_id
+        if mood_data.mood_id not in MOODS:
+            # Check if it's a custom mood
+            custom_mood = await db.custom_moods.find_one({'id': mood_data.mood_id, 'user_id': user_id})
+            if not custom_mood:
+                raise HTTPException(status_code=400, detail="Invalid mood_id")
         
-        await db.mood_entries.update_one(
-            {'user_id': user_id, 'date': mood_data.date},
-            {'$set': update_data}
-        )
+        # Check for crisis keywords
+        if await check_crisis_keywords(mood_data.note):
+            # Create crisis notification
+            crisis_notification = Notification(
+                user_id=user_id,
+                type="crisis_support",
+                title="Support Available",
+                body="We noticed you might need support. Help is available 24/7.",
+                priority="urgent"
+            )
+            await db.notifications.insert_one(crisis_notification.dict())
         
-        updated_entry = await db.mood_entries.find_one({'user_id': user_id, 'date': mood_data.date})
-        return MoodEntry(**enrich_mood_entry(updated_entry))
-    else:
-        # Create new entry
-        mood_entry_dict = mood_data.dict()
-        mood_entry_dict['user_id'] = user_id
+        # Check if entry exists for this date
+        existing_entry = await db.mood_entries.find_one({'user_id': user_id, 'date': mood_data.date})
         
-        # Ensure timestamp is set
-        if mood_entry_dict.get('timestamp') is None:
-            mood_entry_dict['timestamp'] = datetime.utcnow()
-        
-        mood_entry = MoodEntry(**mood_entry_dict)
-        entry_dict = mood_entry.dict()
-        
-        await db.mood_entries.insert_one(entry_dict)
-        
-        # Check for achievements
-        new_achievements = await check_and_unlock_achievements(user_id)
-        for achievement_id in new_achievements:
-            achievement_doc = {
-                'user_id': user_id,
-                'achievement_id': achievement_id,
-                'unlock_date': datetime.utcnow()
-            }
-            await db.achievements.insert_one(achievement_doc)
+        if existing_entry:
+            # Update existing entry
+            update_data = mood_data.dict(exclude_unset=True)
+            update_data['updated_at'] = datetime.utcnow()
+            update_data['user_id'] = user_id
             
-            # Create achievement notification
-            achievement = next((a for a in ACHIEVEMENTS if a['id'] == achievement_id), None)
-            if achievement:
-                notif = Notification(
-                    user_id=user_id,
-                    type="achievement",
-                    title="🎉 Achievement Unlocked!",
-                    body=f"You've earned: {achievement['name']}",
-                    priority="high"
-                )
-                await db.notifications.insert_one(notif.dict())
-        
-        return MoodEntry(**enrich_mood_entry(entry_dict))
+            await db.mood_entries.update_one(
+                {'user_id': user_id, 'date': mood_data.date},
+                {'$set': update_data}
+            )
+            
+            updated_entry = await db.mood_entries.find_one({'user_id': user_id, 'date': mood_data.date})
+            return MoodEntry(**enrich_mood_entry(updated_entry))
+        else:
+            # Create new entry - fix datetime serialization
+            mood_entry_dict = mood_data.dict(exclude_unset=True)
+            mood_entry_dict['user_id'] = user_id
+            mood_entry_dict['id'] = str(uuid.uuid4())
+            mood_entry_dict['created_at'] = datetime.utcnow()
+            mood_entry_dict['updated_at'] = datetime.utcnow()
+            
+            # Ensure timestamp is set properly
+            if not mood_entry_dict.get('timestamp'):
+                mood_entry_dict['timestamp'] = datetime.utcnow()
+            
+            # Insert directly without double validation
+            await db.mood_entries.insert_one(mood_entry_dict)
+            
+            # Check for achievements
+            new_achievements = await check_and_unlock_achievements(user_id)
+            for achievement_id in new_achievements:
+                achievement_doc = {
+                    'id': str(uuid.uuid4()),
+                    'user_id': user_id,
+                    'achievement_id': achievement_id,
+                    'unlock_date': datetime.utcnow()
+                }
+                await db.achievements.insert_one(achievement_doc)
+                
+                # Create achievement notification
+                achievement = next((a for a in ACHIEVEMENTS if a['id'] == achievement_id), None)
+                if achievement:
+                    notif = Notification(
+                        user_id=user_id,
+                        type="achievement",
+                        title="🎉 Achievement Unlocked!",
+                        body=f"You've earned: {achievement['name']}",
+                        priority="high"
+                    )
+                    await db.notifications.insert_one(notif.dict())
+            
+            # Retrieve and enrich the entry
+            saved_entry = await db.mood_entries.find_one({'user_id': user_id, 'date': mood_data.date})
+            return MoodEntry(**enrich_mood_entry(saved_entry))
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating mood entry: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create mood entry: {str(e)}")
 
 @api_router.get("/moods", response_model=List[MoodEntry])
 async def get_mood_entries(
