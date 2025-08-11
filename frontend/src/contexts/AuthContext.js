@@ -81,13 +81,34 @@ export const AuthProvider = ({ children }) => {
   // Handle auth callback from Emergent
   useEffect(() => {
     const handleAuthCallback = async () => {
+      // Check both URL hash and search params for session_id
       const hash = window.location.hash;
-      const sessionIdMatch = hash.match(/session_id=([^&]*)/);
+      const search = window.location.search;
+      
+      console.log('Auth callback check:', { hash, search, fullUrl: window.location.href });
+      
+      let sessionIdMatch = hash.match(/session_id=([^&]*)/);
+      
+      // If not in hash, check search params
+      if (!sessionIdMatch) {
+        sessionIdMatch = search.match(/session_id=([^&]*)/);
+      }
+      
+      // Also try URLSearchParams for more reliable parsing
+      if (!sessionIdMatch) {
+        const urlParams = new URLSearchParams(search);
+        const sessionId = urlParams.get('session_id');
+        if (sessionId) {
+          sessionIdMatch = [null, sessionId]; // Format to match regex result
+        }
+      }
       
       if (sessionIdMatch) {
         const sessionId = sessionIdMatch[1];
+        console.log('Found session ID:', sessionId);
         
         try {
+          console.log('Calling auth session endpoint...');
           const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
             method: 'POST',
             headers: {
@@ -96,26 +117,40 @@ export const AuthProvider = ({ children }) => {
             body: JSON.stringify({ session_id: sessionId })
           });
 
+          console.log('Auth response status:', response.status);
+          
           if (response.ok) {
             const authData = await response.json();
+            console.log('Auth data received:', authData);
+            
             if (authData.success) {
               localStorage.setItem('session_token', authData.session_token);
               setUser(authData.user);
               setIsAuthenticated(true);
               
-              // Clear the hash from URL
-              window.location.hash = '';
+              // Clear the hash and search params from URL
+              window.history.replaceState({}, document.title, window.location.pathname);
+              
+              console.log('Authentication successful!');
+            } else {
+              console.error('Auth failed:', authData.message);
             }
+          } else {
+            console.error('Auth request failed:', response.status, await response.text());
           }
         } catch (error) {
           console.error('Auth callback error:', error);
         }
         
         setLoading(false);
+      } else {
+        console.log('No session_id found in URL');
+        setLoading(false);
       }
     };
 
-    handleAuthCallback();
+    // Add a small delay to ensure the page has fully loaded
+    setTimeout(handleAuthCallback, 100);
   }, []);
 
   const value = {
