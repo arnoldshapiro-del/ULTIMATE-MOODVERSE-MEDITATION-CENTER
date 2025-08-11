@@ -134,14 +134,22 @@ async def generate_ai_insights(user_id: str, entries: List[dict]):
                 insights.append("🌱 Your emotions seem gentle recently. This could be a time for self-reflection.")
     
     # Weather correlation
-    weather_entries = [e for e in entries if e and e.get('weather', {}).get('condition')]
+    weather_entries = []
+    for e in entries:
+        if e and e.get('weather') and isinstance(e.get('weather'), dict) and e['weather'].get('condition'):
+            weather_entries.append(e)
+    
     if len(weather_entries) > 3:
         sunny_moods = [e for e in weather_entries if e['weather'].get('condition') == 'sunny']
         if len(sunny_moods) > len(weather_entries) * 0.6:
             insights.append("☀️ You tend to feel better on sunny days. Try light therapy during gloomy weather.")
     
     # Social activity correlation
-    social_entries = [e for e in entries if e and 'social' in e.get('tags', [])]
+    social_entries = []
+    for e in entries:
+        if e and e.get('tags') and isinstance(e.get('tags'), list) and 'social' in e['tags']:
+            social_entries.append(e)
+    
     if len(social_entries) > 2:
         social_intensities = [e.get('intensity', 3) for e in social_entries if e.get('intensity')]
         all_intensities = [e.get('intensity', 3) for e in entries if e and e.get('intensity')]
@@ -157,7 +165,11 @@ async def generate_ai_insights(user_id: str, entries: List[dict]):
         insights.append("🙏 Your gratitude practice is strong and contributes to emotional resilience.")
     
     # Exercise correlation
-    exercise_entries = [e for e in entries if e and 'exercise' in e.get('tags', [])]
+    exercise_entries = []
+    for e in entries:
+        if e and e.get('tags') and isinstance(e.get('tags'), list) and 'exercise' in e['tags']:
+            exercise_entries.append(e)
+    
     if len(exercise_entries) > 2:
         exercise_intensities = [e.get('intensity', 3) for e in exercise_entries if e.get('intensity')]
         if exercise_intensities and statistics.mean(exercise_intensities) > 3.5:
