@@ -284,35 +284,42 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   }, [selectedMeditation]);
 
   const startMeditation = async (program) => {
+    console.log('🎬 Starting meditation:', program.title);
+    
     setSelectedMeditation(program);
     setTimeRemaining(duration * 60);
     setCurrentPhase('preparation');
     setIsPlaying(true);
     
-    // Handle video playback
-    if (showVideo && videoRef.current) {
-      try {
-        // Ensure video is loaded
-        videoRef.current.load();
-        // Try to play video (muted initially to bypass autoplay restrictions)
-        await videoRef.current.play();
-        console.log('Video started successfully');
-      } catch (error) {
-        console.warn('Video autoplay failed:', error);
-        // Fallback: Use CSS background instead
-        setShowVideo(false);
+    // Small delay to ensure state is updated before media starts
+    setTimeout(async () => {
+      // Handle video playback
+      if (showVideo && program.videoSrc) {
+        console.log('🎥 Starting video:', program.videoSrc);
+        if (videoRef.current) {
+          try {
+            videoRef.current.src = program.videoSrc;
+            videoRef.current.load();
+            await videoRef.current.play();
+            console.log('✅ Video started successfully');
+          } catch (error) {
+            console.warn('⚠️ Video failed:', error);
+            // Keep video element but it will show CSS background
+          }
+        }
       }
-    }
-    
-    // Handle audio playback
-    if (audioEnabled) {
-      await startAudio();
-    }
-    
-    // Start guided audio after a brief delay
-    setTimeout(() => {
-      playGuidedAudio('preparation');
-    }, 1000);
+      
+      // Handle audio playback
+      if (audioEnabled) {
+        console.log('🔊 Starting audio...');
+        await startAudio();
+      }
+      
+      // Start guided speech after media starts
+      setTimeout(() => {
+        playGuidedAudio('preparation');
+      }, 2000);
+    }, 500);
   };
 
   const togglePlayPause = async () => {
