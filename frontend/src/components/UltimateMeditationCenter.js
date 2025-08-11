@@ -584,16 +584,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         ) : (
           // Active Meditation Session
           <div className="space-y-6 relative h-full">
-            {/* Debug Video Conditional - REMOVE IN PRODUCTION */}
-            {console.log('🔍 VIDEO DEBUG:', {
-              showVideo,
-              selectedMeditation: selectedMeditation?.title,
-              videoSrc: selectedMeditation?.videoSrc,
-              conditional: showVideo && selectedMeditation && selectedMeditation.videoSrc
-            })}
-            
-            {/* Background Video */}
-            {showVideo && selectedMeditation && selectedMeditation.videoSrc && (
+            {/* Background Video - ALWAYS RENDER WHEN ENABLED */}
+            {showVideo && selectedMeditation && (
               <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
@@ -601,17 +593,26 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   loop
                   muted
                   playsInline
-                  preload="metadata"
-                  src={selectedMeditation.videoSrc}
+                  preload="none"
                   onError={(e) => {
-                    console.warn('🚨 Video failed to load:', e.target.src);
-                    // Don't disable video entirely - just log the error
-                    // The CSS background will show instead
+                    console.warn('🚨 Video failed to load, but element stays visible:', e.target?.src);
                   }}
                   onLoadedData={(e) => {
-                    console.log('✅ Video loaded successfully:', e.target.src);
+                    console.log('✅ Video loaded successfully:', e.target?.src);
                   }}
-                />
+                  onCanPlay={() => {
+                    console.log('✅ Video can start playing');
+                    if (videoRef.current) {
+                      videoRef.current.play().catch(e => console.log('Video autoplay prevented:', e));
+                    }
+                  }}
+                >
+                  {/* Multiple source formats for better compatibility */}
+                  <source src={selectedMeditation.videoSrc} type="video/mp4" />
+                  <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_640x360_1mb.mp4" type="video/mp4" />
+                  {/* Fallback message */}
+                  Your browser does not support the video tag.
+                </video>
               </div>
             )}
 
