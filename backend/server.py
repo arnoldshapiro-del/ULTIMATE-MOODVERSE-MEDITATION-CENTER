@@ -35,7 +35,15 @@ app = FastAPI(title="MoodVerse Ultimate API", description="Complete Social Emoti
 api_router = APIRouter(prefix="/api")
 
 def enrich_mood_entry(entry_dict):
-    """Add mood details to mood entry"""
+    """Add mood details to mood entry and ensure proper datetime handling"""
+    # Ensure required datetime fields are present
+    if not entry_dict.get('timestamp'):
+        entry_dict['timestamp'] = datetime.utcnow()
+    if not entry_dict.get('created_at'):
+        entry_dict['created_at'] = datetime.utcnow()
+    if not entry_dict.get('updated_at'):
+        entry_dict['updated_at'] = datetime.utcnow()
+    
     mood_id = entry_dict['mood_id']
     if mood_id in MOODS:
         entry_dict['mood'] = MoodData(
