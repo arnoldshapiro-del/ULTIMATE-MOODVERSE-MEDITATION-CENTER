@@ -20,7 +20,7 @@ import uuid
 from models import (
     MoodEntry, MoodEntryCreate, MoodEntryUpdate, MoodStats, MoodData, 
     Achievement, User, Friend, SocialFeedItem, Notification, CustomMood,
-    MeditationSession, WeeklyReport, MOODS, ACHIEVEMENTS, CRISIS_KEYWORDS,
+    MeditationSession, WeeklyReport, LoginResponse, MOODS, ACHIEVEMENTS, CRISIS_KEYWORDS,
     WEATHER_CONDITIONS, ACTIVITY_IMPACT
 )
 
