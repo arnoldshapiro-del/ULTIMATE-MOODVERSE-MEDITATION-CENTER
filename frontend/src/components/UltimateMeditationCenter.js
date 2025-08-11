@@ -139,7 +139,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-pink-500 to-rose-500',
       defaultDuration: 12,
       phases: ['preparation', 'reflection', 'appreciation', 'integration'],
-      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      videoSrc: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4',
       backgroundStyle: 'linear-gradient(45deg, #be185d, #e11d48, #f97316)',
       audioType: 'warmth',
       guidedAudio: {
