@@ -667,53 +667,59 @@ async def export_comprehensive_csv(
     end_date: Optional[str] = None
 ):
     """Export comprehensive mood data as CSV"""
-    query = {'user_id': user_id}
-    if start_date or end_date:
-        date_query = {}
-        if start_date:
-            date_query['$gte'] = start_date
-        if end_date:
-            date_query['$lte'] = end_date
-        query['date'] = date_query
-    
-    entries = await db.mood_entries.find(query).sort('date', 1).to_list(length=None)
-    
-    output = io.StringIO()
-    writer = csv.writer(output)
-    
-    # Enhanced header with all fields
-    writer.writerow([
-        'Date', 'Mood', 'Emoji', 'Category', 'Intensity', 'Note',
-        'Weather', 'Location', 'Tags', 'Voice Note', 'Photo',
-        'Activity Data', 'Sleep Data', 'Timestamp'
-    ])
-    
-    for entry in entries:
-        mood_data = MOODS.get(entry['mood_id'], {})
+    try:
+        query = {'user_id': user_id}
+        if start_date or end_date:
+            date_query = {}
+            if start_date:
+                date_query['$gte'] = start_date
+            if end_date:
+                date_query['$lte'] = end_date
+            query['date'] = date_query
+        
+        # Use limit to prevent timeout
+        entries = await db.mood_entries.find(query).sort('date', 1).limit(1000).to_list(length=1000)
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Enhanced header with all fields
         writer.writerow([
-            entry['date'],
-            mood_data.get('label', entry['mood_id']),
-            mood_data.get('emoji', ''),
-            mood_data.get('category', 'neutral'),
-            entry.get('intensity', 3),
-            entry.get('note', ''),
-            json.dumps(entry.get('weather', {})),
-            json.dumps(entry.get('location', {})),
-            ','.join(entry.get('tags', [])),
-            'Yes' if entry.get('voice_note_url') else 'No',
-            'Yes' if entry.get('photo_url') else 'No',
-            json.dumps(entry.get('activity_data', {})),
-            json.dumps(entry.get('sleep_data', {})),
-            entry.get('timestamp', '').strftime('%Y-%m-%d %H:%M:%S') if entry.get('timestamp') else ''
+            'Date', 'Mood', 'Emoji', 'Category', 'Intensity', 'Note',
+            'Weather', 'Location', 'Tags', 'Voice Note', 'Photo',
+            'Activity Data', 'Sleep Data', 'Timestamp'
         ])
-    
-    output.seek(0)
-    
-    return StreamingResponse(
-        io.BytesIO(output.getvalue().encode('utf-8')),
-        media_type='text/csv',
-        headers={'Content-Disposition': f'attachment; filename=moodverse-ultimate-{datetime.now().strftime("%Y-%m-%d")}.csv'}
-    )
+        
+        for entry in entries:
+            mood_data = MOODS.get(entry['mood_id'], {})
+            writer.writerow([
+                entry.get('date', ''),
+                mood_data.get('label', entry.get('mood_id', '')),
+                mood_data.get('emoji', ''),
+                mood_data.get('category', 'neutral'),
+                entry.get('intensity', 3),
+                entry.get('note', ''),
+                json.dumps(entry.get('weather', {})) if entry.get('weather') else '',
+                json.dumps(entry.get('location', {})) if entry.get('location') else '',
+                ','.join(entry.get('tags', [])),
+                'Yes' if entry.get('voice_note_url') else 'No',
+                'Yes' if entry.get('photo_url') else 'No',
+                json.dumps(entry.get('activity_data', {})) if entry.get('activity_data') else '',
+                json.dumps(entry.get('sleep_data', {})) if entry.get('sleep_data') else '',
+                entry.get('timestamp', '').strftime('%Y-%m-%d %H:%M:%S') if isinstance(entry.get('timestamp'), datetime) else str(entry.get('timestamp', ''))
+            ])
+        
+        output.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(output.getvalue().encode('utf-8')),
+            media_type='text/csv',
+            headers={'Content-Disposition': f'attachment; filename=moodverse-ultimate-{datetime.now().strftime("%Y-%m-%d")}.csv'}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting CSV: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to export CSV: {str(e)}")
 
 # Weekly Reports
 @api_router.get("/reports/weekly", response_model=WeeklyReport)
