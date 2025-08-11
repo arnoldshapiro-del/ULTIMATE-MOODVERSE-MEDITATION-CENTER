@@ -785,8 +785,9 @@ async def get_user_achievements(authorization: str = Header(None)):
 
 # Notifications
 @api_router.get("/notifications", response_model=List[Notification])
-async def get_notifications(user_id: str = "demo_user", limit: int = 50):
+async def get_notifications(authorization: str = Header(None), limit: int = 50):
     """Get user notifications"""
+    user_id = await get_authenticated_user_id(authorization)
     notifications = await db.notifications.find({'user_id': user_id}).sort('timestamp', -1).limit(limit).to_list(length=limit)
     return [Notification(**notif) for notif in notifications]
 
