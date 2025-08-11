@@ -246,8 +246,67 @@ const crisisResources = [
 ];
 
 const UltimateMoodTracker = () => {
-  // Authentication and user state
-  const { user, login, logout, isAuthenticated, loading: authLoading } = useContext(AuthContext);
+  // Authentication states
+  const [authMode, setAuthMode] = useState('signin'); // 'signin', 'signup', 'forgot'
+  const [authForm, setAuthForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (authMode === 'signup') {
+      if (authForm.password !== authForm.confirmPassword) {
+        toast({
+          title: "Error",
+          description: "Passwords don't match",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (authForm.password.length < 6) {
+        toast({
+          title: "Error", 
+          description: "Password must be at least 6 characters",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    
+    // For now, simulate successful signup/signin
+    // In production, this would call your backend API
+    const userData = {
+      id: 'user_' + Date.now(),
+      name: authForm.name || 'User',
+      email: authForm.email,
+      picture: '',
+      joinDate: new Date().toISOString()
+    };
+    
+    localStorage.setItem('session_token', 'demo_token_' + Date.now());
+    setUser(userData);
+    setIsAuthenticated(true);
+    
+    toast({
+      title: `Welcome${authMode === 'signup' ? ' to MoodVerse' : ' back'}! ✨`,
+      description: authMode === 'signup' 
+        ? "Your account has been created successfully." 
+        : "You've been signed in successfully.",
+      className: "bg-gradient-to-r from-green-400 to-blue-500 text-white border-none"
+    });
+  };
+
+  const handleInputChange = (field, value) => {
+    setAuthForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
   const { notifications, addNotification } = useContext(NotificationContext);
   
   // Core mood tracking state
