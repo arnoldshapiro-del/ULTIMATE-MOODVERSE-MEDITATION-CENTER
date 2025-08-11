@@ -288,9 +288,13 @@ async def check_and_unlock_achievements(user_id: str):
 
 # Authentication endpoints
 @api_router.post("/auth/session", response_model=LoginResponse)
-async def authenticate_session(session_id: str):
+async def authenticate_session(request_data: dict):
     """Authenticate user with Emergent session ID"""
     try:
+        session_id = request_data.get('session_id')
+        if not session_id:
+            return LoginResponse(success=False, message="Session ID is required")
+        
         # Call Emergent auth API
         async with aiohttp.ClientSession() as session:
             headers = {"X-Session-ID": session_id}
