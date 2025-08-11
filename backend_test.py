@@ -499,13 +499,22 @@ class UltimateMoodVerseAPITester:
         """Test CSV export with all Ultimate fields"""
         print("\n📊 Testing CSV Export Functionality...")
         
-        response = self.make_request('GET', '/moods/export/csv', params={'user_id': self.test_user_id})
-        
-        if response['status_code'] == 200:
-            # For CSV export, we expect a different content type
-            self.log_result("CSV export functionality", True, "Export endpoint accessible")
-        else:
-            self.log_result("CSV export functionality", False, f"Status: {response['status_code']}")
+        try:
+            # Make direct request to check CSV export
+            url = f"{self.base_url}/moods/export/csv"
+            response = requests.get(url, params={'user_id': self.test_user_id}, timeout=30)
+            
+            if response.status_code == 200:
+                # Check if response contains CSV data
+                content = response.text
+                if 'Date,Mood,Emoji' in content or len(content) > 100:
+                    self.log_result("CSV export functionality", True, f"Export successful, size: {len(content)} chars")
+                else:
+                    self.log_result("CSV export functionality", True, "Export endpoint accessible but empty data")
+            else:
+                self.log_result("CSV export functionality", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("CSV export functionality", False, f"Error: {str(e)}")
     
     def test_mood_retrieval(self):
         """Test mood entry retrieval with filters"""
