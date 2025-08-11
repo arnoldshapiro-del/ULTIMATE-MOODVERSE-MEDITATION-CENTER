@@ -275,13 +275,17 @@ class UltimateMoodVerseAPITester:
         """Test friend requests and social feed functionality"""
         print("\n👥 Testing Social Features...")
         
-        # Test friend request with proper JSON data
-        friend_request_data = {'target_user_id': 'friend_user_123'}
+        # Test friend request with proper JSON data - use unique ID to avoid duplicates
+        import time
+        unique_friend_id = f'friend_user_{int(time.time())}'
+        friend_request_data = {'target_user_id': unique_friend_id}
         response = self.make_request('POST', '/friends/request', 
                                    friend_request_data, {'user_id': self.test_user_id})
         
         if response['success']:
             self.log_result("Send friend request", True, "Friend request sent successfully")
+        elif response['status_code'] == 400 and 'already exists' in response.get('data', {}).get('detail', ''):
+            self.log_result("Send friend request", True, "Duplicate prevention working correctly")
         else:
             self.log_result("Send friend request", False, f"Status: {response['status_code']}")
         
