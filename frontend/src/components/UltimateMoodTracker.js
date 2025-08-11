@@ -28,6 +28,9 @@ import { useToast } from '../hooks/use-toast';
 import { AuthContext } from '../contexts/AuthContext';
 import { NotificationContext } from '../contexts/NotificationContext';
 import { moodApi } from '../services/moodApi';
+import { ParticleEffect, ConfettiCelebration, FloatingHearts } from './ParticleSystem';
+import CrisisSupport from './CrisisSupport';
+import CustomMoodCreator from './CustomMoodCreator';
 
 // Enhanced moods with custom mood support
 const defaultMoods = [
