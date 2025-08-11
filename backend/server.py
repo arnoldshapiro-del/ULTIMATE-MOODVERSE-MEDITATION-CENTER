@@ -763,9 +763,10 @@ async def get_meditation_sessions(user_id: str = "demo_user"):
     return [MeditationSession(**session) for session in sessions]
 
 # Achievements
-@api_router.get("/achievements")
-async def get_user_achievements(user_id: str = "demo_user"):
-    """Get user achievements with unlock status"""
+@api_router.get("/user/achievements")
+async def get_user_achievements(authorization: str = Header(None)):
+    """Get user achievements"""
+    user_id = await get_authenticated_user_id(authorization)
     user_achievements = await db.achievements.find({'user_id': user_id}).to_list(length=None)
     unlocked_ids = [ua['achievement_id'] for ua in user_achievements]
     
