@@ -101,9 +101,10 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-blue-500 to-teal-500',
       defaultDuration: 10,
       phases: ['preparation', 'awareness', 'focus', 'integration'],
-      // Using CSS gradients for background instead of video to ensure it works
+      // Using Big Buck Bunny sample video (widely available and reliable)
+      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      // CSS fallback for when video fails to load
       backgroundStyle: 'linear-gradient(45deg, #1e3a8a, #0891b2, #06b6d4)',
-      // Browser-compatible audio generation instead of external files
       audioType: 'ocean',
       guidedAudio: {
         preparation: 'Find a comfortable position and close your eyes gently. Take three deep breaths.',
@@ -120,6 +121,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-green-500 to-emerald-500',
       defaultDuration: 8,
       phases: ['preparation', 'rhythm', 'deep_breathing', 'integration'],
+      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
       backgroundStyle: 'linear-gradient(45deg, #065f46, #059669, #10b981)',
       audioType: 'forest',
       guidedAudio: {
@@ -137,6 +139,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-pink-500 to-rose-500',
       defaultDuration: 12,
       phases: ['preparation', 'reflection', 'appreciation', 'integration'],
+      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       backgroundStyle: 'linear-gradient(45deg, #be185d, #e11d48, #f97316)',
       audioType: 'warmth',
       guidedAudio: {
@@ -154,6 +157,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-purple-500 to-indigo-500',
       defaultDuration: 15,
       phases: ['preparation', 'scanning', 'release', 'integration'],
+      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
       backgroundStyle: 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)',
       audioType: 'space',
       guidedAudio: {
