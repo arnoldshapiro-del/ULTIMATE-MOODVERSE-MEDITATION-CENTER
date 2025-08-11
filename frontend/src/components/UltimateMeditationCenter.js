@@ -605,7 +605,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   src={selectedMeditation.videoSrc}
                   onError={(e) => {
                     console.warn('🚨 Video failed to load:', e.target.src);
-                    setShowVideo(false);
+                    // Don't disable video entirely - just log the error
+                    // The CSS background will show instead
                   }}
                   onLoadedData={(e) => {
                     console.log('✅ Video loaded successfully:', e.target.src);
