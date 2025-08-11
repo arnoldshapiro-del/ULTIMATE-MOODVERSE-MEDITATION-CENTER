@@ -442,6 +442,7 @@ const UltimateMoodTracker = () => {
   const [allMoods, setAllMoods] = useState(defaultMoods);
   
   // Visual effects state
+  const [showConfetti, setShowConfetti] = useState(false);
   const [showMeditationCenter, setShowMeditationCenter] = useState(false);
   const [particleEffect, setParticleEffect] = useState(null);
   const [currentTheme, setCurrentTheme] = useState('cosmic');
