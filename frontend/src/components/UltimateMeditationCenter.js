@@ -23,7 +23,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const [duration, setDuration] = useState(10); // minutes
   const [showVideo, setShowVideo] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [selectedSound, setSelectedSound] = useState('default');
+  const [selectedSound, setSelectedSound] = useState('rain'); // Start with URL-based audio
   const [currentPhase, setCurrentPhase] = useState('preparation');
   
   // Audio generation for different meditation types
