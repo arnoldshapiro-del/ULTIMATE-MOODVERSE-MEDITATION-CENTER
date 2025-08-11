@@ -862,11 +862,12 @@ async def upload_voice(file: UploadFile = File(None)):
 # Enhanced Export
 @api_router.get("/moods/export/csv")
 async def export_comprehensive_csv(
-    user_id: str = "demo_user",
+    authorization: str = Header(None),
     start_date: Optional[str] = None,
     end_date: Optional[str] = None
 ):
     """Export comprehensive mood data as CSV"""
+    user_id = await get_authenticated_user_id(authorization)
     try:
         query = {'user_id': user_id}
         if start_date or end_date:
