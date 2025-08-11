@@ -585,7 +585,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
           // Active Meditation Session
           <div className="space-y-6 relative h-full">
             {/* Background Video */}
-            {showVideo && (
+            {showVideo && selectedMeditation && (
               <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
@@ -596,11 +596,11 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   preload="metadata"
                   src={selectedMeditation.videoSrc}
                   onError={(e) => {
-                    console.warn('Video failed to load, using CSS background');
+                    console.warn('Video failed to load:', selectedMeditation.videoSrc);
                     setShowVideo(false);
                   }}
                   onLoadedData={() => {
-                    console.log('Video loaded successfully');
+                    console.log('Video loaded successfully:', selectedMeditation.videoSrc);
                   }}
                 />
                 {/* CSS Gradient Fallback */}
