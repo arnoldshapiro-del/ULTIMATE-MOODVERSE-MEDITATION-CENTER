@@ -153,9 +153,9 @@ class UltimateMoodVerseAPITester:
         
         # Test 5: /api/auth/logout endpoint
         print("Testing /api/auth/logout endpoint...")
-        logout_data = {'session_token': 'test_token_12345'}
+        logout_params = {'session_token': 'test_token_12345'}
         
-        logout_response = self.make_request('POST', '/auth/logout', logout_data)
+        logout_response = self.make_request('POST', '/auth/logout', params=logout_params)
         
         if logout_response['success']:
             response_data = logout_response['data']
