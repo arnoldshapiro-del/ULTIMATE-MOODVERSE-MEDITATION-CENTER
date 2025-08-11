@@ -10,6 +10,7 @@ from pathlib import Path
 import hashlib
 from typing import List, Optional
 from datetime import datetime, timedelta
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 import csv
 import io
 import statistics
