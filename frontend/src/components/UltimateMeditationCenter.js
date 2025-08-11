@@ -26,9 +26,64 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const [selectedSound, setSelectedSound] = useState('default');
   const [currentPhase, setCurrentPhase] = useState('preparation');
   
-  const timerRef = useRef();
-  const audioRef = useRef();
-  const videoRef = useRef();
+  // Audio generation for different meditation types
+  const generateAmbientAudio = (audioType) => {
+    if (typeof window === 'undefined' || !window.AudioContext) return null;
+    
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      let oscillator, gainNode;
+      
+      const startAmbientSound = () => {
+        oscillator = audioContext.createOscillator();
+        gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Configure based on meditation type
+        switch (audioType) {
+          case 'ocean':
+            // Ocean waves simulation
+            oscillator.frequency.setValueAtTime(110, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+            break;
+          case 'forest':
+            // Forest ambiance
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            oscillator.type = 'triangle';
+            break;
+          case 'warmth':
+            // Warm harmonic sound
+            oscillator.frequency.setValueAtTime(136.1, audioContext.currentTime); // C# - heart chakra frequency
+            gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+            oscillator.type = 'sine';
+            break;
+          case 'space':
+            // Deep space ambiance
+            oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.06, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+            break;
+          default:
+            oscillator.frequency.setValueAtTime(110, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        }
+        
+        oscillator.start();
+        return { oscillator, gainNode, audioContext };
+      };
+      
+      return { startAmbientSound };
+    } catch (error) {
+      console.warn('Web Audio API not supported:', error);
+      return null;
+    }
+  };
+
+  const [ambientAudio, setAmbientAudio] = useState(null);
 
   // Ultimate Meditation Programs (based on top 20 apps research)
   const meditationPrograms = [
