@@ -1195,7 +1195,7 @@ async def stripe_webhook(request: Request):
         logger.error(f"Webhook error: {str(e)}")
         raise HTTPException(status_code=400, detail="Webhook processing failed")
 
-app.include_router(api_router, prefix="/api")
+app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
