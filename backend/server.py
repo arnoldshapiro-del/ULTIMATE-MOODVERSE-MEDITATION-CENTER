@@ -285,6 +285,148 @@ async def check_and_unlock_achievements(user_id: str):
     
     return unlocked
 
+# Authentication endpoints
+@api_router.post("/auth/session", response_model=LoginResponse)
+async def authenticate_session(session_id: str):
+    """Authenticate user with Emergent session ID"""
+    try:
+        # Call Emergent auth API
+        async with aiohttp.ClientSession() as session:
+            headers = {"X-Session-ID": session_id}
+            async with session.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers=headers
+            ) as response:
+                if response.status != 200:
+                    return LoginResponse(success=False, message="Invalid session")
+                
+                user_data = await response.json()
+        
+        # Check if user exists
+        existing_user = await db.users.find_one({"email": user_data["email"]})
+        
+        if not existing_user:
+            # Create new user
+            user_doc = {
+                "id": user_data["id"],
+                "email": user_data["email"],
+                "name": user_data["name"],
+                "picture": user_data.get("picture", ""),
+                "created_at": datetime.utcnow(),
+                "preferences": {"theme": "dark", "notifications": True},
+                "profile_stats": {
+                    "total_moods": 0,
+                    "current_streak": 0,
+                    "level": 1,
+                    "experience": 0
+                }
+            }
+            await db.users.insert_one(user_doc)
+            user_id = user_data["id"]
+        else:
+            user_id = existing_user["id"]
+        
+        # Create session token (7-day expiry)
+        session_token = hashlib.sha256(f"{user_id}_{datetime.utcnow()}_{uuid.uuid4()}".encode()).hexdigest()
+        session_doc = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "session_token": session_token,
+            "expires_at": datetime.utcnow() + timedelta(days=7),
+            "created_at": datetime.utcnow(),
+            "is_active": True
+        }
+        await db.user_sessions.insert_one(session_doc)
+        
+        return LoginResponse(
+            success=True,
+            user={
+                "id": user_id,
+                "email": user_data["email"],
+                "name": user_data["name"],
+                "picture": user_data.get("picture", "")
+            },
+            session_token=session_token
+        )
+        
+    except Exception as e:
+        logger.error(f"Authentication error: {str(e)}")
+        return LoginResponse(success=False, message="Authentication failed")
+
+@api_router.post("/auth/logout")
+async def logout(session_token: str):
+    """Logout user by deactivating session"""
+    try:
+        await db.user_sessions.update_one(
+            {"session_token": session_token},
+            {"$set": {"is_active": False}}
+        )
+        return {"success": True, "message": "Logged out successfully"}
+    except Exception as e:
+        logger.error(f"Logout error: {str(e)}")
+        return {"success": False, "message": "Logout failed"}
+
+@api_router.get("/auth/user")
+async def get_current_user(authorization: str = Header(None)):
+    """Get current user from session token"""
+    try:
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="No valid session")
+        
+        session_token = authorization.replace("Bearer ", "")
+        
+        # Find active session
+        session = await db.user_sessions.find_one({
+            "session_token": session_token,
+            "is_active": True,
+            "expires_at": {"$gte": datetime.utcnow()}
+        })
+        
+        if not session:
+            raise HTTPException(status_code=401, detail="Session expired")
+        
+        # Get user
+        user = await db.users.find_one({"id": session["user_id"]})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {
+            "id": user["id"],
+            "email": user["email"],
+            "name": user["name"],
+            "picture": user.get("picture", ""),
+            "preferences": user.get("preferences", {}),
+            "profile_stats": user.get("profile_stats", {})
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Get user error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get user")
+
+# Helper function to get authenticated user ID
+async def get_authenticated_user_id(authorization: str = Header(None)) -> str:
+    """Extract user ID from session token"""
+    if not authorization or not authorization.startswith("Bearer "):
+        return "demo_user"  # Fallback for demo mode
+    
+    session_token = authorization.replace("Bearer ", "")
+    
+    try:
+        session = await db.user_sessions.find_one({
+            "session_token": session_token,
+            "is_active": True,
+            "expires_at": {"$gte": datetime.utcnow()}
+        })
+        
+        if session:
+            return session["user_id"]
+    except:
+        pass
+    
+    return "demo_user"  # Fallback
+
 # API Endpoints
 
 @api_router.get("/")
