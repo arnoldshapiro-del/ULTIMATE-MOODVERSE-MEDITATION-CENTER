@@ -40,13 +40,15 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-blue-500 to-teal-500',
       defaultDuration: 10,
       phases: ['preparation', 'awareness', 'focus', 'integration'],
-      videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-peaceful-sunrise-over-lake-4135-large.mp4',
-      audioSrc: 'https://www.soundjay.com/misc/sounds/meditation-bell.wav',
+      // Using CSS gradients for background instead of video to ensure it works
+      backgroundStyle: 'linear-gradient(45deg, #1e3a8a, #0891b2, #06b6d4)',
+      // Browser-compatible audio generation instead of external files
+      audioType: 'ocean',
       guidedAudio: {
-        preparation: 'Find a comfortable position... Close your eyes gently...',
-        awareness: 'Notice your breath... Feel the air entering and leaving your nostrils...',
-        focus: 'When your mind wanders, gently return to your breath...',
-        integration: 'Take a moment to appreciate this peaceful state...'
+        preparation: 'Find a comfortable position and close your eyes gently. Take three deep breaths.',
+        awareness: 'Notice your breath naturally flowing in and out. Feel the air entering and leaving your nostrils.',
+        focus: 'When your mind wanders, gently return your attention to your breath without judgment.',
+        integration: 'Take a moment to appreciate this peaceful state. Slowly open your eyes when ready.'
       }
     },
     {
@@ -57,13 +59,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-green-500 to-emerald-500',
       defaultDuration: 8,
       phases: ['preparation', 'rhythm', 'deep_breathing', 'integration'],
-      videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
-      audioSrc: 'https://www.soundjay.com/nature/sounds/wind-chimes.wav',
+      backgroundStyle: 'linear-gradient(45deg, #065f46, #059669, #10b981)',
+      audioType: 'forest',
       guidedAudio: {
-        preparation: 'Sit comfortably with your spine straight...',
-        rhythm: 'Breathe in for 4 counts... Hold for 4... Breathe out for 6...',
-        deep_breathing: 'Feel your belly rise and fall... Let each breath be deeper than the last...',
-        integration: 'Return to your natural breathing rhythm...'
+        preparation: 'Sit comfortably with your spine straight. Place one hand on your chest, one on your belly.',
+        rhythm: 'Breathe in for 4 counts... Hold for 4... Breathe out for 6... Feel the rhythm.',
+        deep_breathing: 'Feel your belly rise and fall with each breath. Let each breath be deeper and more relaxing.',
+        integration: 'Return to your natural breathing rhythm. Notice how much calmer you feel.'
       }
     },
     {
@@ -74,13 +76,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-pink-500 to-rose-500',
       defaultDuration: 12,
       phases: ['preparation', 'reflection', 'appreciation', 'integration'],
-      videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-golden-hour-sunset-1786-large.mp4',
-      audioSrc: 'https://www.soundjay.com/nature/sounds/birds-chirping.wav',
+      backgroundStyle: 'linear-gradient(45deg, #be185d, #e11d48, #f97316)',
+      audioType: 'warmth',
       guidedAudio: {
-        preparation: 'Take a moment to settle into gratitude...',
-        reflection: 'Think of three things you\'re grateful for today...',
-        appreciation: 'Feel the warmth of appreciation in your heart...',
-        integration: 'Carry this gratitude with you throughout your day...'
+        preparation: 'Settle into a comfortable position and place your hand on your heart.',
+        reflection: 'Think of three things you are grateful for today. Really feel the appreciation.',
+        appreciation: 'Feel the warmth of gratitude spreading through your body. Let it fill your heart.',
+        integration: 'Carry this feeling of gratitude with you throughout your day. You are blessed.'
       }
     },
     {
@@ -91,13 +93,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-purple-500 to-indigo-500',
       defaultDuration: 15,
       phases: ['preparation', 'scanning', 'release', 'integration'],
-      videoSrc: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4',
-      audioSrc: 'https://www.soundjay.com/nature/sounds/ocean-waves.wav',
+      backgroundStyle: 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)',
+      audioType: 'space',
       guidedAudio: {
-        preparation: 'Lie down comfortably... Let your body sink into the surface...',
-        scanning: 'Start at the top of your head... Notice any tension or sensations...',
-        release: 'Let go of any tension you find... Allow each part to relax completely...',
-        integration: 'Feel your whole body relaxed and at peace...'
+        preparation: 'Lie down comfortably and let your body sink into the surface beneath you.',
+        scanning: 'Start at the top of your head. Notice any sensations, tension, or areas that feel tight.',
+        release: 'As you scan each part of your body, consciously let go of any tension you find.',
+        integration: 'Feel your whole body relaxed and at peace. Rest in this state of complete relaxation.'
       }
     }
   ];
