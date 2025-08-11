@@ -568,9 +568,35 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   className="w-full h-full object-cover opacity-30"
                   loop
                   muted
+                  playsInline
+                  preload="metadata"
                   src={selectedMeditation.videoSrc}
+                  onError={(e) => {
+                    console.warn('Video failed to load, using CSS background');
+                    setShowVideo(false);
+                  }}
+                  onLoadedData={() => {
+                    console.log('Video loaded successfully');
+                  }}
+                />
+                {/* CSS Gradient Fallback */}
+                <div 
+                  className="absolute inset-0 opacity-50"
+                  style={{ background: selectedMeditation.backgroundStyle }}
                 />
               </div>
+            )}
+
+            {/* CSS Background when video is disabled */}
+            {!showVideo && (
+              <div 
+                className="absolute inset-0 -z-10 rounded-lg"
+                style={{ 
+                  background: selectedMeditation.backgroundStyle,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              />
             )}
 
             {/* Hidden Audio Elements */}
