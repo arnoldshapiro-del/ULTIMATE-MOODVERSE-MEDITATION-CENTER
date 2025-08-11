@@ -107,39 +107,48 @@ user_problem_statement: "Complete all Ultimate MoodVerse features without requir
 backend:
   - task: "Ultimate MoodVerse Backend API"
     implemented: true
-    working: false  # Need to test
+    working: false
     file: "server.py, models.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
         - agent: "main"
         - comment: "Comprehensive backend with all Ultimate features implemented including user auth, achievements, social features, meditation, AI insights, file uploads, crisis detection, etc. All endpoints created but need testing."
+        - working: false
+        - agent: "testing"
+        - comment: "CRITICAL: Core mood entry endpoints failing with 500 errors. 60% success rate (15/25 tests passed). Working: User management, achievements, custom moods, meditation, notifications, weekly reports. Failing: Mood CRUD operations, mood stats, crisis detection, CSV export. Issue appears to be with mood entry database operations - possible async/await or data validation problems in mood entry creation/retrieval."
 
   - task: "Database Models and Data Structure"
     implemented: true
-    working: false  # Need to test
+    working: true
     file: "models.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
         - agent: "main"
         - comment: "Complete Pydantic models for User, MoodEntry, Achievement, CustomMood, MeditationSession, etc. Enhanced mood definitions with 16 moods, achievement system, crisis keywords detection."
+        - working: true
+        - agent: "testing"
+        - comment: "Models are correctly defined and working. User, Achievement, CustomMood, MeditationSession models all function properly. Issue is not with model definitions but with mood entry endpoint implementation."
 
   - task: "Advanced Analytics and AI Insights"
     implemented: true
-    working: false  # Need to test
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
         - agent: "main"
         - comment: "AI insight generation, mood prediction, weather correlation, activity analysis, streak calculation, comprehensive stats generation implemented with mock AI."
+        - working: false
+        - agent: "testing"
+        - comment: "Analytics endpoints failing due to dependency on mood entry data. Cannot test AI insights, weather correlation, or mood stats because mood entry creation/retrieval is broken. Weekly reports work but show 0 entries."
 
 frontend:
   - task: "Ultimate MoodTracker Main Component"
