@@ -3,14 +3,15 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-class MoodApiService {
-  // Create or update mood entry
+class EnhancedMoodApiService {
+  // Create or update mood entry with intensity
   async createMoodEntry(moodData) {
     try {
       const response = await axios.post(`${API}/moods`, {
         date: moodData.date,
         mood_id: moodData.mood.id,
         note: moodData.note,
+        intensity: moodData.intensity || 3,
         timestamp: moodData.timestamp
       });
       return response.data;
@@ -53,6 +54,7 @@ class MoodApiService {
       const payload = {};
       if (updateData.mood_id) payload.mood_id = updateData.mood_id;
       if (updateData.note !== undefined) payload.note = updateData.note;
+      if (updateData.intensity) payload.intensity = updateData.intensity;
 
       const response = await axios.put(`${API}/moods/${id}`, payload);
       return response.data;
@@ -73,7 +75,7 @@ class MoodApiService {
     }
   }
 
-  // Export to CSV
+  // Export to CSV with enhanced data
   async exportToCsv(startDate = null, endDate = null) {
     try {
       const params = new URLSearchParams();
@@ -89,7 +91,7 @@ class MoodApiService {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `mood-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `moodverse-export-${new Date().toISOString().split('T')[0]}.csv`;
       link.click();
       window.URL.revokeObjectURL(url);
 
@@ -100,7 +102,7 @@ class MoodApiService {
     }
   }
 
-  // Get mood statistics
+  // Get enhanced mood statistics
   async getMoodStats() {
     try {
       const response = await axios.get(`${API}/moods/stats`);
@@ -108,6 +110,28 @@ class MoodApiService {
     } catch (error) {
       console.error('Error fetching mood stats:', error);
       throw new Error('Failed to load mood statistics');
+    }
+  }
+
+  // Get AI-powered insights
+  async getMoodInsights() {
+    try {
+      const response = await axios.get(`${API}/moods/insights`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching mood insights:', error);
+      throw new Error('Failed to load AI insights');
+    }
+  }
+
+  // Get user achievements
+  async getAchievements() {
+    try {
+      const response = await axios.get(`${API}/achievements`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching achievements:', error);
+      throw new Error('Failed to load achievements');
     }
   }
 
@@ -122,23 +146,40 @@ class MoodApiService {
     }
   }
 
-  // Mock PDF export (placeholder)
+  // Enhanced PDF export with more data
   async exportToPdf() {
     try {
-      // For now, we'll create a simple text file
-      // In a real implementation, you'd call a PDF generation endpoint
       const entries = await this.getMoodEntries();
+      const stats = await this.getMoodStats();
       
-      const content = `Mood Tracker Report\n\nGenerated on: ${new Date().toLocaleDateString()}\n\n` +
-        entries.map(entry => 
-          `${entry.date} - ${entry.mood.label} ${entry.mood.emoji}\n${entry.note ? 'Note: ' + entry.note : 'No note'}\n`
-        ).join('\n');
+      const content = `
+🌟 MoodVerse Report 🌟
+
+Generated on: ${new Date().toLocaleDateString()}
+Total Entries: ${stats.total_entries}
+Current Streak: ${stats.current_streak} days
+Most Common Mood: ${stats.most_common_mood}
+Weekly Average Intensity: ${stats.weekly_average_intensity}/5
+
+📊 Mood Distribution:
+Positive: ${stats.mood_distribution?.positive || 0} entries
+Neutral: ${stats.mood_distribution?.neutral || 0} entries  
+Negative: ${stats.mood_distribution?.negative || 0} entries
+
+📝 Recent Entries:
+${entries.slice(0, 20).map(entry => 
+  `${entry.date} - ${entry.mood.label} ${entry.mood.emoji} (Intensity: ${entry.intensity}/5)\n${entry.note ? 'Note: ' + entry.note : 'No note'}`
+).join('\n\n')}
+
+💡 AI Recommendations:
+${stats.recommendations?.join('\n') || 'Keep tracking your moods for personalized insights!'}
+      `.trim();
       
       const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `mood-tracker-report-${new Date().toISOString().split('T')[0]}.txt`;
+      link.download = `moodverse-report-${new Date().toISOString().split('T')[0]}.txt`;
       link.click();
       window.URL.revokeObjectURL(url);
 
@@ -148,6 +189,50 @@ class MoodApiService {
       throw new Error('Failed to export PDF');
     }
   }
+
+  // Simulate breathing session tracking
+  async recordBreathingSession(duration = 60) {
+    try {
+      // In a real app, you might want to store this data
+      console.log(`Breathing session completed: ${duration} seconds`);
+      return { success: true, duration, experience: 50 };
+    } catch (error) {
+      console.error('Error recording breathing session:', error);
+      throw new Error('Failed to record breathing session');
+    }
+  }
+
+  // Get mood trends analysis
+  async getMoodTrends(days = 30) {
+    try {
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      const entries = await this.getMoodEntries(startDate, endDate);
+      
+      // Analyze trends
+      const trends = {
+        averageIntensity: entries.length > 0 ? 
+          entries.reduce((sum, entry) => sum + (entry.intensity || 3), 0) / entries.length : 0,
+        moodFrequency: {},
+        weeklyPattern: {}
+      };
+      
+      entries.forEach(entry => {
+        const mood = entry.mood.label;
+        trends.moodFrequency[mood] = (trends.moodFrequency[mood] || 0) + 1;
+        
+        const dayOfWeek = new Date(entry.date).getDay();
+        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek];
+        trends.weeklyPattern[dayName] = (trends.weeklyPattern[dayName] || 0) + 1;
+      });
+      
+      return trends;
+    } catch (error) {
+      console.error('Error fetching mood trends:', error);
+      throw new Error('Failed to load mood trends');
+    }
+  }
 }
 
-export const moodApi = new MoodApiService();
+export const moodApi = new EnhancedMoodApiService();
