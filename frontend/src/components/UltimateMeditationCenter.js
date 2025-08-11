@@ -101,8 +101,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       color: 'from-blue-500 to-teal-500',
       defaultDuration: 10,
       phases: ['preparation', 'awareness', 'focus', 'integration'],
-      // Using Big Buck Bunny sample video (widely available and reliable)
-      videoSrc: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      // Using reliable test video that's always available
+      videoSrc: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
       // CSS fallback for when video fails to load
       backgroundStyle: 'linear-gradient(45deg, #1e3a8a, #0891b2, #06b6d4)',
       audioType: 'ocean',
