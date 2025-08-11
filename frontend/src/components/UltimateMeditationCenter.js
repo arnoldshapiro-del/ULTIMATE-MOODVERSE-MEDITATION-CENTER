@@ -360,42 +360,35 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   };
 
   const startAudio = async () => {
-    const currentSound = natureSounds.find(s => s.id === selectedSound);
+    if (!audioEnabled) return;
     
-    if (currentSound?.type === 'generated') {
-      // Use generated ambient audio
-      const audioType = currentSound.audioType || selectedMeditation?.audioType || 'ocean';
-      const ambientGen = generateAmbientAudio(audioType);
-      
-      if (ambientGen) {
-        try {
-          const audioInstance = ambientGen.startAmbientSound();
-          currentAudioContext.current = audioInstance;
-          console.log('Generated audio started successfully');
-        } catch (error) {
-          console.warn('Generated audio failed:', error);
-        }
-      }
-    } else if (audioRef.current && currentSound?.src) {
+    const currentSound = natureSounds.find(s => s.id === selectedSound);
+    console.log('Starting audio with:', currentSound);
+    
+    if (currentSound?.type === 'url' && currentSound.src && audioRef.current) {
       // Use URL-based audio
       try {
-        audioRef.current.volume = 0.3; // Set reasonable volume
+        console.log('Playing URL audio:', currentSound.src);
+        audioRef.current.volume = 0.3;
         await audioRef.current.play();
-        console.log('URL audio started successfully');
+        console.log('✅ URL audio started successfully');
+        return;
       } catch (error) {
-        console.warn('Audio autoplay failed:', error);
-        // Fallback to generated audio
-        const audioType = selectedMeditation?.audioType || 'ocean';
-        const ambientGen = generateAmbientAudio(audioType);
-        if (ambientGen) {
-          try {
-            const audioInstance = ambientGen.startAmbientSound();
-            currentAudioContext.current = audioInstance;
-            console.log('Fallback generated audio started');
-          } catch (fallbackError) {
-            console.warn('All audio options failed:', fallbackError);
-          }
-        }
+        console.warn('⚠️ URL audio failed:', error);
+      }
+    }
+    
+    // Fallback to generated audio or when type is 'generated'
+    const audioType = currentSound?.audioType || selectedMeditation?.audioType || 'ocean';
+    const ambientGen = generateAmbientAudio(audioType);
+    
+    if (ambientGen) {
+      try {
+        const audioInstance = ambientGen.startAmbientSound();
+        currentAudioContext.current = audioInstance;
+        console.log('✅ Generated audio started successfully');
+      } catch (error) {
+        console.warn('⚠️ Generated audio failed:', error);
       }
     }
   };
