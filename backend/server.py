@@ -597,15 +597,52 @@ async def mark_notification_read(notification_id: str):
 @api_router.post("/upload/photo")
 async def upload_photo(file: UploadFile = File(...)):
     """Upload photo for mood entry"""
-    # In a real implementation, you'd save to cloud storage
-    # For demo, we'll return a mock URL
-    return {"url": f"https://demo-storage.com/photos/{file.filename}"}
+    try:
+        # Validate file type
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Validate file size (max 10MB)
+        content = await file.read()
+        if len(content) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File size too large (max 10MB)")
+        
+        # In a real implementation, you'd save to cloud storage
+        # For demo, we'll return a mock URL with actual filename
+        demo_url = f"https://demo-storage.moodverse.app/photos/{file.filename}"
+        
+        return {"url": demo_url, "size": len(content), "type": file.content_type}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading photo: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload photo: {str(e)}")
 
 @api_router.post("/upload/voice")
 async def upload_voice(file: UploadFile = File(...)):
     """Upload voice note"""
-    # In a real implementation, you'd save to cloud storage
-    return {"url": f"https://demo-storage.com/voice/{file.filename}"}
+    try:
+        # Validate file type
+        if not file.content_type or not file.content_type.startswith('audio/'):
+            raise HTTPException(status_code=400, detail="File must be an audio file")
+        
+        # Validate file size (max 50MB for audio)
+        content = await file.read()
+        if len(content) > 50 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File size too large (max 50MB)")
+        
+        # In a real implementation, you'd save to cloud storage
+        # For demo, we'll return a mock URL with actual filename
+        demo_url = f"https://demo-storage.moodverse.app/voice/{file.filename}"
+        
+        return {"url": demo_url, "size": len(content), "type": file.content_type, "duration": 120}  # Mock 2-minute duration
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading voice note: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload voice note: {str(e)}")
 
 # Enhanced Export
 @api_router.get("/moods/export/csv")
