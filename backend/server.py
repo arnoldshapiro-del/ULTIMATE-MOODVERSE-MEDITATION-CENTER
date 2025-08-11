@@ -721,18 +721,20 @@ async def send_friend_request(request_data: dict, authorization: str = Header(No
         raise HTTPException(status_code=500, detail=f"Failed to send friend request: {str(e)}")
 
 # Custom Moods
+@api_router.get("/moods/custom", response_model=List[CustomMood])
+async def get_custom_moods(authorization: str = Header(None)):
+    """Get user's custom moods"""
+    user_id = await get_authenticated_user_id(authorization)
+    custom_moods = await db.custom_moods.find({'user_id': user_id}).to_list(length=None)
+    return [CustomMood(**mood) for mood in custom_moods]
+
 @api_router.post("/moods/custom", response_model=CustomMood)
-async def create_custom_mood(mood_data: dict, user_id: str = "demo_user"):
+async def create_custom_mood(mood_data: dict, authorization: str = Header(None)):
     """Create custom mood"""
+    user_id = await get_authenticated_user_id(authorization)
     custom_mood = CustomMood(user_id=user_id, **mood_data)
     await db.custom_moods.insert_one(custom_mood.dict())
     return custom_mood
-
-@api_router.get("/moods/custom", response_model=List[CustomMood])
-async def get_custom_moods(user_id: str = "demo_user"):
-    """Get user's custom moods"""
-    custom_moods = await db.custom_moods.find({'user_id': user_id}).to_list(length=None)
-    return [CustomMood(**mood) for mood in custom_moods]
 
 # Meditation & Wellness
 @api_router.post("/meditation/session", response_model=MeditationSession)
