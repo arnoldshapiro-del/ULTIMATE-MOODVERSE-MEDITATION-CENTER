@@ -319,9 +319,67 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   };
 
-  const playAudio = () => {
+  const startAudio = async () => {
+    const currentSound = natureSounds.find(s => s.id === selectedSound);
+    
+    if (currentSound?.type === 'generated') {
+      // Use generated ambient audio
+      const audioType = currentSound.audioType || selectedMeditation?.audioType || 'ocean';
+      const ambientGen = generateAmbientAudio(audioType);
+      
+      if (ambientGen) {
+        try {
+          const audioInstance = ambientGen.startAmbientSound();
+          currentAudioContext.current = audioInstance;
+          console.log('Generated audio started successfully');
+        } catch (error) {
+          console.warn('Generated audio failed:', error);
+        }
+      }
+    } else if (audioRef.current && currentSound?.src) {
+      // Use URL-based audio
+      try {
+        audioRef.current.volume = 0.3; // Set reasonable volume
+        await audioRef.current.play();
+        console.log('URL audio started successfully');
+      } catch (error) {
+        console.warn('Audio autoplay failed:', error);
+        // Fallback to generated audio
+        const audioType = selectedMeditation?.audioType || 'ocean';
+        const ambientGen = generateAmbientAudio(audioType);
+        if (ambientGen) {
+          try {
+            const audioInstance = ambientGen.startAmbientSound();
+            currentAudioContext.current = audioInstance;
+            console.log('Fallback generated audio started');
+          } catch (fallbackError) {
+            console.warn('All audio options failed:', fallbackError);
+          }
+        }
+      }
+    }
+  };
+
+  const stopAudio = () => {
+    // Stop generated audio
+    if (currentAudioContext.current) {
+      try {
+        if (currentAudioContext.current.oscillator) {
+          currentAudioContext.current.oscillator.stop();
+        }
+        if (currentAudioContext.current.audioContext) {
+          currentAudioContext.current.audioContext.close();
+        }
+        currentAudioContext.current = null;
+      } catch (error) {
+        console.warn('Error stopping generated audio:', error);
+      }
+    }
+    
+    // Stop URL-based audio
     if (audioRef.current) {
-      audioRef.current.play().catch(console.error);
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
   };
 
