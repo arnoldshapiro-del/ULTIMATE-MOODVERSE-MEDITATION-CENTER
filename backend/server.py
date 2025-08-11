@@ -569,8 +569,9 @@ async def get_mood_entries(
     return enriched_entries
 
 @api_router.get("/moods/stats", response_model=MoodStats)
-async def get_comprehensive_mood_stats(user_id: str = "demo_user"):
+async def get_comprehensive_mood_stats(authorization: str = Header(None)):
     """Get advanced mood statistics with AI insights"""
+    user_id = await get_authenticated_user_id(authorization)
     entries = await db.mood_entries.find({'user_id': user_id}).to_list(length=None)
     
     if not entries:
