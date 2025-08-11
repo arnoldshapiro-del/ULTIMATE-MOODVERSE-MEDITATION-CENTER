@@ -835,7 +835,16 @@ const UltimateMoodTracker = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button 
-              onClick={login} 
+              onClick={async () => {
+                const result = await login();
+                if (result && result.success) {
+                  toast({
+                    title: "Welcome to MoodVerse! ✨",
+                    description: "Your emotional intelligence journey begins now.",
+                    className: "bg-gradient-to-r from-green-400 to-blue-500 text-white border-none"
+                  });
+                }
+              }}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
               <User className="h-4 w-4 mr-2" />
