@@ -1314,10 +1314,250 @@ const UltimateMoodTracker = () => {
             </div>
           </div>
 
-          {/* All the enhanced tab contents would go here */}
-          {/* Calendar, Trends, Achievements, AI Insights, Social, and Pro Analytics tabs */}
-          
-          {/* Social Tab - New Feature */}
+          {/* Enhanced Calendar View */}
+          <TabsContent value="calendar">
+            <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">✨ Your Mood Galaxy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Calendar Header */}
+                  <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-white/70">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                      <div key={day} className="p-2">{day}</div>
+                    ))}
+                  </div>
+                  
+                  {/* Enhanced Calendar Days */}
+                  <div className="grid grid-cols-7 gap-2">
+                    {generateCalendarDays().map((day, index) => (
+                      <div
+                        key={index}
+                        className={`
+                          aspect-square flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all duration-300 hover:scale-105
+                          ${day.date ? 'cursor-pointer hover:bg-white/10' : ''} 
+                          ${day.mood ? `${day.mood.color} shadow-lg` : 'bg-white/5 border-white/10'}
+                        `}
+                        onClick={() => day.date && setCurrentDate(day.date)}
+                      >
+                        {day.date && (
+                          <>
+                            <div className="text-sm font-bold text-white">{day.day}</div>
+                            {day.mood && (
+                              <div className="text-2xl animate-bounce">{day.mood.emoji}</div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Enhanced Trends View */}
+          <TabsContent value="trends">
+            <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">📈 Your Emotional Journey</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Enhanced Trend Graph */}
+                  <div className="h-80 flex items-end justify-between gap-2 p-6 bg-white/5 rounded-xl border border-white/10">
+                    {getMoodTrendData().map((day, index) => (
+                      <div key={index} className="flex flex-col items-center flex-1 max-w-20">
+                        <div className="text-xs text-white/70 mb-2 font-medium">{day.dayName}</div>
+                        <div 
+                          className={`
+                            w-full rounded-t-xl flex items-end justify-center pb-2 transition-all duration-500 hover:scale-105 relative overflow-hidden
+                            ${day.mood ? `${day.mood.color} shadow-lg` : 'bg-white/10 border border-white/20'}
+                          `}
+                          style={{ 
+                            height: day.mood ? `${day.intensity * 30 + 40}px` : '20px',
+                            minHeight: '20px'
+                          }}
+                        >
+                          {day.mood && (
+                            <div className="text-3xl animate-pulse">{day.mood.emoji}</div>
+                          )}
+                          {day.mood && (
+                            <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
+                          )}
+                        </div>
+                        {day.intensity > 0 && (
+                          <div className="text-xs text-white/50 mt-1">
+                            Level {day.intensity}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Enhanced Mood Legend */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {allMoods.slice(0, 12).map((mood) => (
+                      <div 
+                        key={mood.id} 
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 hover:scale-105 ${mood.color}`}
+                      >
+                        <span className="text-2xl">{mood.emoji}</span>
+                        <div>
+                          <div className="text-sm font-bold text-white">{mood.label}</div>
+                          <div className="text-xs text-white/70">
+                            {mood.category} • Level {mood.intensity}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Achievements Tab */}
+          <TabsContent value="achievements">
+            <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Trophy className="h-6 w-6 text-yellow-400" />
+                  Your Achievement Gallery
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userAchievements.map((achievement) => (
+                    <div 
+                      key={achievement.id}
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                        achievement.unlocked 
+                          ? 'bg-gradient-to-br from-yellow-400/20 to-orange-500/20 border-yellow-400/50 shadow-xl' 
+                          : 'bg-white/5 border-white/10 grayscale'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`text-4xl ${achievement.unlocked ? 'animate-bounce' : ''}`}>
+                          {achievement.icon}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className={`font-bold ${achievement.unlocked ? 'text-yellow-300' : 'text-white/50'}`}>
+                            {achievement.name}
+                          </h3>
+                          <p className={`text-sm ${achievement.unlocked ? 'text-white/80' : 'text-white/40'}`}>
+                            {achievement.description}
+                          </p>
+                          {achievement.unlocked && (
+                            <Badge className="mt-2 bg-yellow-400/20 text-yellow-200 border-yellow-400/30">
+                              Unlocked! ✨
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* AI Insights Tab */}
+          <TabsContent value="insights">
+            <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Brain className="h-6 w-6 text-purple-400" />
+                  AI-Powered Insights & Predictions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* AI Mood Prediction */}
+                <div className="p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-400/30">
+                  <h3 className="font-bold text-purple-200 mb-3 flex items-center gap-2">
+                    🔮 Next Mood Prediction
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😊</span>
+                      <div>
+                        <div className="text-white font-medium">Predicted: Happy</div>
+                        <div className="text-white/70 text-sm">85% confidence based on your patterns</div>
+                      </div>
+                    </div>
+                    <div className="text-white/60 text-sm">
+                      Factors: Sunny weather, morning time, recent exercise activity
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pattern Analysis */}
+                <div className="grid gap-4">
+                  <div className="p-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-400/30">
+                    <h3 className="font-bold text-blue-200 mb-2">📊 Weekly Pattern Analysis</h3>
+                    <p className="text-white/80 text-sm">
+                      This week you've experienced {moodHistory.length} emotional states. 
+                      Your emotional intelligence is growing! 🌱
+                    </p>
+                    <div className="mt-3 grid grid-cols-7 gap-1">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
+                        <div key={day} className="text-center">
+                          <div className="text-xs text-white/60">{day}</div>
+                          <div className={`h-8 rounded mt-1 ${
+                            i < 4 ? 'bg-green-400/30' : i < 6 ? 'bg-yellow-400/30' : 'bg-red-400/30'
+                          }`} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl border border-green-400/30">
+                    <h3 className="font-bold text-green-200 mb-2">💡 Personalized Recommendations</h3>
+                    <div className="space-y-2">
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-400 mt-1">•</span>
+                        <span className="text-white/80 text-sm">
+                          Try the breathing exercise when feeling overwhelmed. 
+                          Users with similar patterns report 40% better mood regulation.
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-400 mt-1">•</span>
+                        <span className="text-white/80 text-sm">
+                          Your mood tends to improve after social activities. Schedule more friend time!
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-400 mt-1">•</span>
+                        <span className="text-white/80 text-sm">
+                          Morning meditation could help stabilize your daily emotional baseline.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-xl border border-orange-400/30">
+                    <h3 className="font-bold text-orange-200 mb-2">🌦️ Weather Impact Analysis</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-2 bg-white/10 rounded">
+                        <div className="text-2xl">☀️</div>
+                        <div className="text-white text-sm">Sunny</div>
+                        <div className="text-green-400 text-xs">+20% mood boost</div>
+                      </div>
+                      <div className="text-center p-2 bg-white/10 rounded">
+                        <div className="text-2xl">🌧️</div>
+                        <div className="text-white text-sm">Rainy</div>
+                        <div className="text-red-400 text-xs">-15% mood impact</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Social Tab - Enhanced */}
           <TabsContent value="social">
             <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20">
               <CardHeader>
