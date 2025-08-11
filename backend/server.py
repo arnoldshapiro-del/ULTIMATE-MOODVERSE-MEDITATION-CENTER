@@ -482,40 +482,55 @@ async def get_friends(user_id: str = "demo_user"):
     return [Friend(**friend) for friend in friends]
 
 @api_router.post("/friends/request")
-async def send_friend_request(target_user_id: str, user_id: str = "demo_user"):
+async def send_friend_request(request_data: dict, user_id: str = "demo_user"):
     """Send friend request"""
-    # Check if friendship already exists
-    existing = await db.friends.find_one({
-        '$or': [
-            {'user_id': user_id, 'friend_id': target_user_id},
-            {'user_id': target_user_id, 'friend_id': user_id}
-        ]
-    })
-    
-    if existing:
-        raise HTTPException(status_code=400, detail="Friendship already exists")
-    
-    # Create friend request
-    friend_request = {
-        'user_id': user_id,
-        'friend_id': target_user_id,
-        'status': 'pending',
-        'connection_date': datetime.utcnow()
-    }
-    
-    await db.friends.insert_one(friend_request)
-    
-    # Create notification
-    notification = Notification(
-        user_id=target_user_id,
-        type="friend_request",
-        title="New Friend Request",
-        body=f"You have a new friend request!",
-        priority="normal"
-    )
-    await db.notifications.insert_one(notification.dict())
-    
-    return {"message": "Friend request sent"}
+    try:
+        target_user_id = request_data.get('target_user_id')
+        if not target_user_id:
+            raise HTTPException(status_code=400, detail="target_user_id is required")
+        
+        if target_user_id == user_id:
+            raise HTTPException(status_code=400, detail="Cannot send friend request to yourself")
+        
+        # Check if friendship already exists
+        existing = await db.friends.find_one({
+            '$or': [
+                {'user_id': user_id, 'friend_id': target_user_id},
+                {'user_id': target_user_id, 'friend_id': user_id}
+            ]
+        })
+        
+        if existing:
+            raise HTTPException(status_code=400, detail="Friendship already exists or request pending")
+        
+        # Create friend request
+        friend_request = {
+            'id': str(uuid.uuid4()),
+            'user_id': user_id,
+            'friend_id': target_user_id,
+            'status': 'pending',
+            'connection_date': datetime.utcnow()
+        }
+        
+        await db.friends.insert_one(friend_request)
+        
+        # Create notification
+        notification = Notification(
+            user_id=target_user_id,
+            type="friend_request",
+            title="New Friend Request",
+            body=f"You have a new friend request!",
+            priority="normal"
+        )
+        await db.notifications.insert_one(notification.dict())
+        
+        return {"message": "Friend request sent successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending friend request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send friend request: {str(e)}")
 
 # Custom Moods
 @api_router.post("/moods/custom", response_model=CustomMood)
