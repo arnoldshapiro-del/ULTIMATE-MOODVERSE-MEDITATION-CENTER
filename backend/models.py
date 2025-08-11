@@ -164,6 +164,8 @@ class LoginResponse(BaseModel):
     user: Optional[dict] = None
     session_token: Optional[str] = None
     message: str = "Login successful"
+
+class WeeklyReport(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     week_start: str  # YYYY-MM-DD
@@ -172,6 +174,69 @@ class LoginResponse(BaseModel):
     insights: List[str]
     recommendations: List[str]
     generated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    session_id: str
+    amount: float
+    currency: str = "usd"
+    package_id: str
+    payment_status: str = "pending"
+    status: str = "initiated"
+    metadata: dict = {}
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SubscriptionPlan(BaseModel):
+    id: str
+    name: str
+    price: float
+    currency: str = "usd"
+    features: List[str]
+    max_mood_entries: int
+    is_premium: bool = False
+
+# Define subscription packages
+SUBSCRIPTION_PACKAGES = {
+    "free": SubscriptionPlan(
+        id="free",
+        name="Free Plan",
+        price=0.0,
+        features=["5 mood entries per month", "Basic analytics"],
+        max_mood_entries=5,
+        is_premium=False
+    ),
+    "premium": SubscriptionPlan(
+        id="premium", 
+        name="Premium",
+        price=4.99,
+        features=[
+            "Unlimited mood entries",
+            "AI insights & predictions", 
+            "Advanced analytics",
+            "Voice notes & photos",
+            "Custom moods",
+            "Crisis support",
+            "Export data"
+        ],
+        max_mood_entries=-1,  # unlimited
+        is_premium=True
+    ),
+    "family": SubscriptionPlan(
+        id="family",
+        name="Family Plan", 
+        price=12.99,
+        features=[
+            "Up to 6 family accounts",
+            "All Premium features",
+            "Parental insights",
+            "Family dashboard"
+        ],
+        max_mood_entries=-1,
+        is_premium=True
+    )
+}
 
 # Enhanced mood reference data with all 16 moods
 MOODS = {
