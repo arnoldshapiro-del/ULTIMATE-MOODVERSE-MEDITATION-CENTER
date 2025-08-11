@@ -22,7 +22,7 @@ from models import (
     MoodEntry, MoodEntryCreate, MoodEntryUpdate, MoodStats, MoodData, 
     Achievement, User, Friend, SocialFeedItem, Notification, CustomMood,
     MeditationSession, WeeklyReport, LoginResponse, MOODS, ACHIEVEMENTS, CRISIS_KEYWORDS,
-    WEATHER_CONDITIONS, ACTIVITY_IMPACT
+    WEATHER_CONDITIONS, ACTIVITY_IMPACT, PaymentTransaction, SUBSCRIPTION_PACKAGES
 )
 
 ROOT_DIR = Path(__file__).parent
