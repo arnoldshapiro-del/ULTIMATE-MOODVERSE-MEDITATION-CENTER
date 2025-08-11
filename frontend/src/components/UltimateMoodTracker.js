@@ -819,25 +819,52 @@ const UltimateMoodTracker = () => {
             <p className="text-white/80">Your Ultimate Emotional Intelligence Platform</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
-              onClick={async () => {
-                const result = await login();
-                if (result && result.success) {
-                  toast({
-                    title: "Welcome to MoodVerse! ✨",
-                    description: "Your emotional intelligence journey begins now.",
-                    className: "bg-gradient-to-r from-green-400 to-blue-500 text-white border-none"
-                  });
-                }
-              }}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-            >
-              <User className="h-4 w-4 mr-2" />
-              Continue with Demo Account
-            </Button>
-            <p className="text-xs text-white/60 text-center">
-              Demo mode includes all premium features
-            </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={login}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Sign In to Your Account
+              </Button>
+              
+              <Button 
+                onClick={login}
+                className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Create New Account
+              </Button>
+              
+              <Button 
+                onClick={login}
+                variant="outline"
+                className="w-full border-white/30 text-white hover:bg-white/10 py-3"
+              >
+                <Key className="h-4 w-4 mr-2" />
+                Forgot Password
+              </Button>
+            </div>
+            
+            <div className="text-center pt-4 border-t border-white/20">
+              <p className="text-xs text-white/60 mb-3">
+                Secure authentication powered by Emergent
+              </p>
+              <div className="flex items-center justify-center space-x-4 text-white/50">
+                <div className="flex items-center">
+                  <Shield className="h-3 w-3 mr-1" />
+                  <span className="text-xs">Encrypted</span>
+                </div>
+                <div className="flex items-center">
+                  <Users className="h-3 w-3 mr-1" />
+                  <span className="text-xs">Google OAuth</span>
+                </div>
+                <div className="flex items-center">
+                  <Lock className="h-3 w-3 mr-1" />
+                  <span className="text-xs">Private</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
