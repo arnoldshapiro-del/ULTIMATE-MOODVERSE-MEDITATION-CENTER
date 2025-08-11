@@ -5,6 +5,35 @@ const API = `${BACKEND_URL}/api`;
 
 class UltimateMoodApiService {
   constructor() {
+    this.baseURL = process.env.REACT_APP_BACKEND_URL + '/api';
+    this.axios = axios.create({
+      baseURL: this.baseURL,
+      timeout: 10000,
+    });
+
+    // Add auth header interceptor
+    this.axios.interceptors.request.use((config) => {
+      const sessionToken = localStorage.getItem('session_token');
+      if (sessionToken) {
+        config.headers.Authorization = `Bearer ${sessionToken}`;
+      }
+      return config;
+    });
+
+    // Add response interceptor for auth errors
+    this.axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Session expired, clear token and redirect to login
+          localStorage.removeItem('session_token');
+          window.location.hash = '';
+          window.location.reload();
+        }
+        return Promise.reject(error);
+      }
+    );
+
     this.userId = 'demo_user'; // In real app, this would come from auth context
   }
 
