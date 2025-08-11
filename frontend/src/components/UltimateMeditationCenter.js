@@ -584,45 +584,53 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         ) : (
           // Active Meditation Session
           <div className="space-y-6 relative h-full">
-            {/* Background Video - ALWAYS RENDER FOR DEBUGGING */}
-            <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover opacity-30"
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                onError={(e) => {
-                  console.warn('Video failed to load:', e.target.src);
-                }}
-                onLoadedData={(e) => {
-                  console.log('Video loaded successfully:', e.target.src);
-                }}
-              />
-              {/* CSS Gradient Fallback */}
-              <div 
-                className="absolute inset-0 opacity-50"
-                style={{ 
-                  background: selectedMeditation?.backgroundStyle || 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)'
-                }}
-              />
-            </div>
+            {/* Background Video */}
+            {showVideo && selectedMeditation && selectedMeditation.videoSrc && (
+              <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover opacity-30"
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  src={selectedMeditation.videoSrc}
+                  onError={(e) => {
+                    console.warn('Video failed to load:', e.target.src);
+                    setShowVideo(false);
+                  }}
+                  onLoadedData={(e) => {
+                    console.log('Video loaded successfully:', e.target.src);
+                  }}
+                />
+              </div>
+            )}
 
-            {/* Audio Element - ALWAYS RENDER FOR DEBUGGING */}
-            <audio
-              ref={audioRef}
-              loop
-              preload="metadata"
-              src="https://samplelib.com/lib/preview/mp3/sample-15s.mp3"
-              onError={(e) => {
-                console.warn('Audio failed to load:', e.target.src);
-              }}
-              onLoadedData={(e) => {
-                console.log('Audio loaded successfully:', e.target.src);
+            {/* CSS Background Fallback */}
+            <div 
+              className="absolute inset-0 -z-10 rounded-lg"
+              style={{ 
+                background: selectedMeditation?.backgroundStyle || 'linear-gradient(45deg, #6d28d9, #7c3aed, #3b82f6)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
               }}
             />
+
+            {/* Audio Element */}
+            {audioEnabled && (
+              <audio
+                ref={audioRef}
+                loop
+                preload="metadata"
+                src={natureSounds.find(s => s.id === selectedSound)?.src}
+                onError={(e) => {
+                  console.warn('Audio failed to load:', e.target?.src);
+                }}
+                onLoadedData={(e) => {
+                  console.log('Audio loaded successfully:', e.target?.src);
+                }}
+              />
+            )}
 
             {/* Session Header */}
             <div className="text-center space-y-2">
