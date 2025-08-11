@@ -13,6 +13,7 @@ import io
 import statistics
 import json
 import re
+import uuid
 
 from models import (
     MoodEntry, MoodEntryCreate, MoodEntryUpdate, MoodStats, MoodData, 
