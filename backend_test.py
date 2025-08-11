@@ -687,6 +687,10 @@ class UltimateMoodVerseAPITester:
         
         # Core functionality tests
         self.test_root_endpoint()
+        
+        # Authentication system tests (as requested in review)
+        self.test_authentication_system()
+        
         self.test_user_management()
         self.test_enhanced_mood_creation()
         self.test_mood_retrieval()
