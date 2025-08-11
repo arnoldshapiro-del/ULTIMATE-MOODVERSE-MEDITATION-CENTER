@@ -84,6 +84,12 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   };
 
   const [ambientAudio, setAmbientAudio] = useState(null);
+  
+  // Add missing refs
+  const videoRef = useRef(null);
+  const audioRef = useRef(null);
+  const timerRef = useRef(null);
+  const currentAudioContext = useRef(null);
 
   // Ultimate Meditation Programs (based on top 20 apps research)
   const meditationPrograms = [
