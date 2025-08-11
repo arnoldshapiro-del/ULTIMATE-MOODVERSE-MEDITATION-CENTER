@@ -259,6 +259,30 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   }, [timeRemaining, selectedMeditation, duration, currentPhase]);
 
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      stopAudio();
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+      clearInterval(timerRef.current);
+    };
+  }, []);
+
+  // Cleanup when meditation changes
+  useEffect(() => {
+    return () => {
+      if (!selectedMeditation) {
+        stopAudio();
+        if ('speechSynthesis' in window) {
+          speechSynthesis.cancel();
+        }
+      }
+    };
+  }, [selectedMeditation]);
+
   const startMeditation = async (program) => {
     setSelectedMeditation(program);
     setTimeRemaining(duration * 60);
