@@ -24,7 +24,7 @@ import { Label } from './ui/label';
 import { Switch } from './ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { useToast } from '../hooks/use-toast';
+import UltimateMeditationCenter from './UltimateMeditationCenter';
 import { AuthContext } from '../contexts/AuthContext';
 import { NotificationContext } from '../contexts/NotificationContext';
 import { moodApi } from '../services/moodApi';
