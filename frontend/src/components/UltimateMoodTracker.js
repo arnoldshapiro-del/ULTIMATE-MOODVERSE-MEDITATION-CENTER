@@ -999,12 +999,40 @@ const UltimateMoodTracker = () => {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-3">
               {dailyChallenges.map((challenge) => (
-                <div 
+                <button
                   key={challenge.id}
-                  className={`flex items-center justify-between p-3 rounded-lg transition-all ${
+                  onClick={() => {
+                    if (!challenge.completed) {
+                      // Mark challenge as completed
+                      completeDailyChallenge(challenge.id);
+                      
+                      // Add XP and show feedback
+                      setExperience(prev => prev + challenge.reward);
+                      
+                      toast({
+                        title: "Challenge Complete! 🎉",
+                        description: `You earned ${challenge.reward} XP for: ${challenge.title}`,
+                        className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-none"
+                      });
+                      
+                      // Check for level up
+                      const newLevel = Math.floor((experience + challenge.reward) / 200) + 1;
+                      if (newLevel > userLevel) {
+                        setUserLevel(newLevel);
+                        setShowConfetti(true);
+                        toast({
+                          title: "Level Up! ⬆️",
+                          description: `Congratulations! You reached Level ${newLevel}!`,
+                          className: "bg-gradient-to-r from-purple-400 to-pink-500 text-white border-none"
+                        });
+                      }
+                    }
+                  }}
+                  disabled={challenge.completed}
+                  className={`flex items-center justify-between p-3 rounded-lg transition-all text-left w-full ${
                     challenge.completed 
-                      ? 'bg-green-500/20 border border-green-400/30' 
-                      : 'bg-white/5 border border-white/10'
+                      ? 'bg-green-500/20 border border-green-400/30 cursor-default' 
+                      : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1025,7 +1053,7 @@ const UltimateMoodTracker = () => {
                   >
                     +{challenge.reward} XP
                   </Badge>
-                </div>
+                </button>
               ))}
             </div>
           </CardContent>
