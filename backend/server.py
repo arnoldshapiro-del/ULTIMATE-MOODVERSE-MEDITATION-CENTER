@@ -662,8 +662,9 @@ async def get_comprehensive_mood_stats(authorization: str = Header(None)):
 
 # Friends & Social Features
 @api_router.get("/friends", response_model=List[Friend])
-async def get_friends(user_id: str = "demo_user"):
+async def get_friends(authorization: str = Header(None)):
     """Get user's friends list"""
+    user_id = await get_authenticated_user_id(authorization)
     friends = await db.friends.find({'user_id': user_id, 'status': 'accepted'}).to_list(length=None)
     return [Friend(**friend) for friend in friends]
 
