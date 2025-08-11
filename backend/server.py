@@ -451,8 +451,10 @@ async def get_user(user_id: str):
 
 # Enhanced Mood Entries
 @api_router.post("/moods", response_model=MoodEntry)
-async def create_mood_entry(mood_data: MoodEntryCreate, user_id: str = "demo_user"):
+async def create_mood_entry(mood_data: MoodEntryCreate, authorization: str = Header(None)):
     """Create comprehensive mood entry with all features"""
+    user_id = await get_authenticated_user_id(authorization)
+    
     try:
         # Validate mood_id
         if mood_data.mood_id not in MOODS:
