@@ -1684,7 +1684,15 @@ const UltimateMoodTracker = () => {
                 </Button>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Button
+                  onClick={() => setShowMeditationCenter(true)}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-4 text-lg font-semibold"
+                >
+                  🧘‍♀️ Open Ultimate Meditation Center
+                </Button>
+                
+                <div className="grid md:grid-cols-2 gap-4">
                 {meditationTechniques.map((technique) => (
                   <div key={technique.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
                     <h4 className="font-semibold text-white mb-2">{technique.name}</h4>
