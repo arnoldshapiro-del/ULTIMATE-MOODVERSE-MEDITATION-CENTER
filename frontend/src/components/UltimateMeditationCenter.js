@@ -616,8 +616,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               }}
             />
 
-            {/* Audio Element */}
-            {audioEnabled && (
+            {/* Audio Element - render when we have a URL source */}
+            {natureSounds.find(s => s.id === selectedSound)?.src && (
               <audio
                 ref={audioRef}
                 loop
