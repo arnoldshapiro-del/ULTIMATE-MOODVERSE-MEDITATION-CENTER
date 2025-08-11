@@ -597,7 +597,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 onError={(e) => {
                   console.warn('Video failed to load:', e.target.src);
                 }}
-                onLoadedData={() => {
+                onLoadedData={(e) => {
                   console.log('Video loaded successfully:', e.target.src);
                 }}
               />
