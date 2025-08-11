@@ -6,7 +6,7 @@ import {
   Sparkles, Gift, Medal, Timer, BarChart3, Brain, User,
   LogOut, Bell, MessageCircle, Camera, Mic, Sun, Moon,
   Cloud, Activity, Music, Share, Shield, Phone, Map,
-  UserPlus, Eye, EyeOff, Lock, Mail, UserCheck, Headphones,
+  UserPlus, Eye, EyeOff, Key, Lock, Mail, UserCheck, Headphones,
   Palette, Image, FileText, BarChart, PieChart, Globe,
   Instagram, Twitter, Facebook, Linkedin, Youtube, TikTok
 } from 'lucide-react';
