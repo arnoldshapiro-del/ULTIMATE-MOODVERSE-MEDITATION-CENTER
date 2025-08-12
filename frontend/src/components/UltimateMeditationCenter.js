@@ -468,7 +468,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     return { audioContext, buffer };
   };
 
-  // Play generated audio buffer
+  // Play generated audio buffer with proper cleanup tracking
   const playAudioBuffer = (audioContext, buffer, volume = 1, loop = true) => {
     try {
       const source = audioContext.createBufferSource();
@@ -481,34 +481,25 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       source.loop = loop;
       source.start();
       
-      return { source, gainNode, audioContext };
+      // Track for cleanup
+      const audioElement = { source, gainNode, audioContext };
+      setActiveSources(prev => [...prev, audioElement]);
+      
+      return audioElement;
     } catch (error) {
       console.warn('Audio playback failed:', error);
       return null;
     }
   };
 
-  // Clean up audio resources
-  const cleanupAudio = () => {
-    activeSources.forEach(({ source, audioContext }) => {
-      try {
-        source.stop();
-        audioContext.close();
-      } catch (e) {
-        // Audio context might already be closed
-      }
-    });
-    setActiveSources([]);
-    
-    if (currentAudioContext) {
-      try {
-        currentAudioContext.close();
-      } catch (e) {
-        // Context might already be closed
-      }
-      setCurrentAudioContext(null);
-    }
-  };
+  // Component cleanup
+  useEffect(() => {
+    return () => {
+      cleanupAudio();
+      clearInterval(timerRef.current);
+      // Don't close the shared context on unmount, just clean up sources
+    };
+  }, []);
 
   // Timer management
   useEffect(() => {
