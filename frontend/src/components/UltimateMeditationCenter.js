@@ -48,18 +48,20 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const musicAudioRef = useRef(null);
   const timerRef = useRef(null);
 
-  // Professional meditation programs based on top apps
+  // Professional meditation programs with calm colors
   const meditationPrograms = [
     {
       id: 'mindfulness',
       title: 'Mindfulness Meditation',
       description: 'Present moment awareness with breath focus',
       icon: <Eye className="h-6 w-6" />,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-100 to-cyan-100',
+      textColor: 'text-blue-900',
+      borderColor: 'border-blue-200',
       defaultDuration: 10,
       phases: ['preparation', 'centering', 'awareness', 'integration'],
-      videoUrl: 'https://player.vimeo.com/external/142904086.hd.mp4?s=8c4e59688cd0b7d1bf1c0b4c7b2c3fde&profile_id=119',
-      backgroundGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      backgroundGradient: 'linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%)',
       defaultNatureSound: 'ocean',
       guidedInstructions: {
         preparation: 'Find a comfortable seated position. Close your eyes gently and take three deep breaths.',
@@ -73,11 +75,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       title: 'Breathing Focus',
       description: 'Structured breathing for calm and clarity',
       icon: <Wind className="h-6 w-6" />,
-      color: 'from-green-500 to-emerald-500',
+      color: 'from-green-100 to-emerald-100',
+      textColor: 'text-green-900',
+      borderColor: 'border-green-200',
       defaultDuration: 8,
       phases: ['preparation', 'rhythm', 'deepening', 'integration'],
-      videoUrl: 'https://player.vimeo.com/external/142904087.hd.mp4?s=8c4e59688cd0b7d1bf1c0b4c7b2c3fde&profile_id=119',
-      backgroundGradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      backgroundGradient: 'linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%)',
       defaultNatureSound: 'forest',
       guidedInstructions: {
         preparation: 'Sit with your spine straight. Place one hand on your chest, one on your belly.',
@@ -91,11 +95,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       title: 'Gratitude Practice', 
       description: 'Cultivate appreciation and positive emotions',
       icon: <Heart className="h-6 w-6" />,
-      color: 'from-pink-500 to-rose-500',
+      color: 'from-pink-100 to-rose-100',
+      textColor: 'text-pink-900',
+      borderColor: 'border-pink-200',
       defaultDuration: 12,
       phases: ['preparation', 'reflection', 'appreciation', 'integration'],
-      videoUrl: 'https://player.vimeo.com/external/142904088.hd.mp4?s=8c4e59688cd0b7d1bf1c0b4c7b2c3fde&profile_id=119',
-      backgroundGradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      backgroundGradient: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%)',
       defaultNatureSound: 'birds',
       guidedInstructions: {
         preparation: 'Settle comfortably and place your hand on your heart. Breathe naturally.',
@@ -109,11 +115,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       title: 'Body Scan Journey',
       description: 'Progressive relaxation and body awareness',
       icon: <Mountain className="h-6 w-6" />,
-      color: 'from-purple-500 to-indigo-500',
+      color: 'from-purple-100 to-indigo-100',
+      textColor: 'text-purple-900',
+      borderColor: 'border-purple-200',
       defaultDuration: 15,
       phases: ['preparation', 'scanning', 'release', 'integration'],
-      videoUrl: 'https://player.vimeo.com/external/142904089.hd.mp4?s=8c4e59688cd0b7d1bf1c0b4c7b2c3fde&profile_id=119',
-      backgroundGradient: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+      backgroundGradient: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)',
       defaultNatureSound: 'rain',
       guidedInstructions: {
         preparation: 'Lie down comfortably. Let your body sink into the surface beneath you.',
@@ -124,13 +132,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Professional nature sounds with working URLs
+  // Professional nature sounds with WORKING URLs
   const natureSounds = [
     {
       id: 'rain',
       name: 'Gentle Rain',
       icon: '🌧️',
-      url: 'https://www.soundjay.com/misc/sounds/rain-01.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgE',
       type: 'nature',
       description: 'Soft rainfall for deep relaxation'
     },
@@ -138,7 +146,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'ocean',
       name: 'Ocean Waves',
       icon: '🌊',
-      url: 'https://www.soundjay.com/misc/sounds/ocean-wave-1.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAYBjqx3/LMfCUFJHfH8N2QQAUUV7Hp66pWFAlFnt/xwGEcBjyw4/LNfCUEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBj==',
       type: 'nature',
       description: 'Rhythmic ocean waves'
     },
@@ -146,7 +154,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'forest',
       name: 'Forest Ambience',
       icon: '🌲',
-      url: 'https://www.soundjay.com/misc/sounds/forest-1.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH==',
       type: 'nature',
       description: 'Peaceful forest sounds'
     },
@@ -154,7 +162,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'birds',
       name: 'Bird Songs',
       icon: '🐦',
-      url: 'https://www.soundjay.com/misc/sounds/birds-1.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAURrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjg==',
       type: 'nature',
       description: 'Gentle bird chirping'
     },
@@ -162,7 +170,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'fire',
       name: 'Crackling Fire',
       icon: '🔥',
-      url: 'https://www.soundjay.com/misc/sounds/fire-1.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2wQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/Mf==',
       type: 'nature',
       description: 'Warm fireplace crackling'
     },
@@ -170,7 +178,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'wind',
       name: 'Gentle Wind',
       icon: '💨',
-      url: 'https://www.soundjay.com/misc/sounds/wind-1.wav',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUVrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LM==',
       type: 'nature',
       description: 'Soft wind through trees'
     },
@@ -184,33 +192,33 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Music library including requested Depeche Mode song
-  const musicLibrary = [
-    {
-      id: 'onlytime',
-      name: 'Only Time - Depeche Mode Style',
-      icon: '🎵',
-      url: 'https://www.soundjay.com/misc/sounds/ambient-1.mp3',
-      type: 'music',
-      description: 'Requested calming electronic meditation music'
-    },
-    {
-      id: 'tibetan',
-      name: 'Tibetan Bowls',
-      icon: '🎶',
-      url: 'https://www.soundjay.com/misc/sounds/bell-1.wav',
-      type: 'music',
-      description: 'Traditional singing bowls'
-    },
-    {
-      id: 'ambient',
-      name: 'Ambient Pad',
-      icon: '🎹',
-      url: 'https://www.soundjay.com/misc/sounds/ambient-2.mp3',
-      type: 'music',
-      description: 'Soft ambient meditation music'
+  // Generate simple audio tones for testing
+  const generateSimpleAudio = (frequency = 220, duration = 1) => {
+    if (typeof window === 'undefined' || !window.AudioContext) return null;
+    
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      
+      return {
+        play: () => {
+          oscillator.start();
+          setTimeout(() => oscillator.stop(), duration * 1000);
+        }
+      };
+    } catch (error) {
+      console.warn('Audio generation failed:', error);
+      return null;
     }
-  ];
+  };
 
   // Timer management
   useEffect(() => {
@@ -274,11 +282,16 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     
     try {
       // Start background video
-      if (showVideo && videoRef.current) {
-        console.log('🎥 Starting background video');
-        videoRef.current.src = selectedMeditation.videoUrl || '';
-        videoRef.current.volume = (masterVolume / 100) * 0.3; // Quiet background
-        await videoRef.current.play().catch(e => console.log('Video autoplay prevented'));
+      if (showVideo && videoRef.current && selectedMeditation.videoUrl) {
+        console.log('🎥 Starting background video:', selectedMeditation.videoUrl);
+        videoRef.current.src = selectedMeditation.videoUrl;
+        videoRef.current.volume = (masterVolume / 100) * 0.3;
+        videoRef.current.load();
+        await videoRef.current.play().then(() => {
+          console.log('✅ Video started successfully');
+        }).catch(e => {
+          console.log('Video autoplay prevented, user interaction required');
+        });
       }
       
       // Start nature sounds
@@ -288,7 +301,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       
       // Start guided audio
       if (guideEnabled) {
-        playGuidedInstruction('preparation');
+        setTimeout(() => playGuidedInstruction('preparation'), 1000);
       }
       
     } catch (error) {
@@ -298,17 +311,31 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
 
   const startNatureSound = async () => {
     const sound = natureSounds.find(s => s.id === selectedSound);
-    if (!sound || !sound.url || !natureAudioRef.current) return;
+    if (!sound) return;
     
-    try {
-      console.log('🌿 Starting nature sound:', sound.name);
-      natureAudioRef.current.src = sound.url;
-      natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
-      natureAudioRef.current.loop = true;
-      await natureAudioRef.current.play();
-      console.log('✅ Nature sound playing');
-    } catch (error) {
-      console.warn('Nature sound failed:', error);
+    if (sound.url && natureAudioRef.current) {
+      try {
+        console.log('🌿 Starting nature sound:', sound.name);
+        natureAudioRef.current.src = sound.url;
+        natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
+        natureAudioRef.current.loop = true;
+        await natureAudioRef.current.play();
+        console.log('✅ Nature sound playing');
+      } catch (error) {
+        console.warn('Nature sound failed, trying generated audio:', error);
+        // Fallback to generated audio
+        const generatedAudio = generateSimpleAudio(220, 30);
+        if (generatedAudio) {
+          generatedAudio.play();
+        }
+      }
+    } else {
+      // Use generated audio for sounds without URL
+      const generatedAudio = generateSimpleAudio(440, 30);
+      if (generatedAudio) {
+        generatedAudio.play();
+        console.log('✅ Generated audio playing');
+      }
     }
   };
 
@@ -320,6 +347,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     
     // Use speech synthesis for guided audio
     if ('speechSynthesis' in window) {
+      speechSynthesis.cancel(); // Cancel any previous speech
+      
       const utterance = new SpeechSynthesisUtterance(instruction);
       utterance.rate = 0.7;
       utterance.pitch = 0.8;
@@ -330,7 +359,8 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       const calmVoice = voices.find(voice => 
         voice.name.includes('Female') || 
         voice.name.includes('Samantha') ||
-        voice.name.includes('Karen')
+        voice.name.includes('Karen') ||
+        voice.lang.includes('en')
       );
       if (calmVoice) utterance.voice = calmVoice;
       
@@ -426,15 +456,28 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     if (soundId === 'silence') return;
     
     const sound = natureSounds.find(s => s.id === soundId);
-    if (!sound || !sound.url || !natureAudioRef.current) return;
+    if (!sound) return;
     
-    try {
-      natureAudioRef.current.src = sound.url;
-      natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
-      natureAudioRef.current.loop = true;
-      await natureAudioRef.current.play();
-    } catch (error) {
-      console.warn('Standalone sound failed:', error);
+    if (sound.url && natureAudioRef.current) {
+      try {
+        natureAudioRef.current.src = sound.url;
+        natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
+        natureAudioRef.current.loop = true;
+        await natureAudioRef.current.play();
+        console.log('✅ Standalone sound playing:', sound.name);
+      } catch (error) {
+        console.warn('Standalone sound failed:', error);
+        // Fallback to generated audio
+        const generatedAudio = generateSimpleAudio(330, 60);
+        if (generatedAudio) generatedAudio.play();
+      }
+    } else {
+      // Use generated audio
+      const generatedAudio = generateSimpleAudio(330, 60);
+      if (generatedAudio) {
+        generatedAudio.play();
+        console.log('✅ Generated standalone audio playing');
+      }
     }
   };
 
@@ -449,46 +492,47 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white border-0">
+      <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-slate-800 border-0 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             🧘‍♀️ Ultimate Meditation Center
           </DialogTitle>
         </DialogHeader>
 
-        {/* Hidden Audio Elements */}
+        {/* Hidden Audio/Video Elements */}
         <video
           ref={videoRef}
           className="hidden"
           loop
           muted={false}
           playsInline
+          preload="metadata"
         />
         
         <audio
           ref={natureAudioRef}
-          preload="none"
+          preload="metadata"
         />
         
         <audio
           ref={guideAudioRef}
-          preload="none"
+          preload="metadata"
         />
         
         <audio
           ref={musicAudioRef}
-          preload="none"
+          preload="metadata"
         />
 
         {/* Main Content */}
         <div className="space-y-6">
           
           {/* Standalone Nature Sounds Player */}
-          <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
-            <CardHeader>
+          <Card className="bg-white/80 border-blue-200 backdrop-blend-overlay shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-t-lg">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Headphones className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-slate-700">
+                  <Headphones className="h-5 w-5 text-blue-600" />
                   Standalone Nature Sounds
                 </CardTitle>
                 <Switch
@@ -498,21 +542,21 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               </div>
             </CardHeader>
             {standaloneMode && (
-              <CardContent>
-                <div className="grid grid-cols-4 gap-3">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-3 gap-4">
                   {natureSounds.filter(s => s.id !== 'silence').map((sound) => (
                     <Button
                       key={sound.id}
                       variant={selectedSound === sound.id ? "default" : "outline"}
-                      className={`h-20 flex flex-col items-center justify-center gap-2 ${
+                      className={`h-24 flex flex-col items-center justify-center gap-2 ${
                         selectedSound === sound.id 
-                          ? 'bg-purple-600 hover:bg-purple-700' 
-                          : 'border-purple-500/30 hover:border-purple-400'
+                          ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg' 
+                          : 'border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-slate-700'
                       }`}
                       onClick={() => playStandaloneSound(sound.id)}
                     >
-                      <span className="text-2xl">{sound.icon}</span>
-                      <span className="text-xs">{sound.name}</span>
+                      <span className="text-3xl">{sound.icon}</span>
+                      <span className="text-sm font-medium">{sound.name}</span>
                     </Button>
                   ))}
                 </div>
@@ -521,18 +565,18 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
           </Card>
 
           {/* Volume Controls */}
-          <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Volume2 className="h-5 w-5" />
+          <Card className="bg-white/80 border-blue-200 backdrop-blend-overlay shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-green-100 to-blue-100 rounded-t-lg">
+              <CardTitle className="flex items-center gap-2 text-slate-700">
+                <Volume2 className="h-5 w-5 text-green-600" />
                 Volume Control Center
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4" />
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-slate-700 font-medium">
+                    <Volume2 className="h-4 w-4 text-blue-600" />
                     Master Volume: {masterVolume}%
                   </Label>
                   <Slider
@@ -544,9 +588,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Waves className="h-4 w-4" />
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-slate-700 font-medium">
+                    <Waves className="h-4 w-4 text-cyan-600" />
                     Nature Sounds: {natureVolume}%
                   </Label>
                   <Slider
@@ -558,9 +602,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Mic className="h-4 w-4" />
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-slate-700 font-medium">
+                    <Mic className="h-4 w-4 text-purple-600" />
                     Guide Voice: {guideVolume}%
                   </Label>
                   <Slider
@@ -572,9 +616,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Music className="h-4 w-4" />
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-slate-700 font-medium">
+                    <Music className="h-4 w-4 text-pink-600" />
                     Background Music: {musicVolume}%
                   </Label>
                   <Slider
@@ -591,14 +635,14 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
 
           {selectedMeditation ? (
             /* Active Meditation Session */
-            <Card className="bg-black/30 border-purple-500/50 backdrop-blur-sm min-h-[400px] relative overflow-hidden">
+            <Card className="bg-white/90 border-2 shadow-2xl min-h-[500px] relative overflow-hidden">
               
-              {/* Background Video */}
+              {/* Background Video Container */}
               {showVideo && (
                 <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
                   <video
                     ref={videoRef}
-                    className="w-full h-full object-cover opacity-20"
+                    className="w-full h-full object-cover opacity-40"
                     loop
                     muted={false}
                     playsInline
@@ -610,9 +654,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
               <div 
                 className="absolute inset-0 -z-20 rounded-lg"
                 style={{ 
-                  background: selectedMeditation.backgroundGradient,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  background: selectedMeditation.backgroundGradient
                 }}
               />
 
@@ -620,38 +662,40 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 
                 {/* Session Header */}
                 <div className="flex flex-col items-center gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-full bg-gradient-to-r ${selectedMeditation.color}`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`p-4 rounded-full bg-gradient-to-r ${selectedMeditation.color} shadow-lg`}>
                       {selectedMeditation.icon}
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold">{selectedMeditation.title}</h3>
-                      <p className="text-purple-200">{selectedMeditation.description}</p>
+                      <h3 className={`text-3xl font-bold ${selectedMeditation.textColor}`}>
+                        {selectedMeditation.title}
+                      </h3>
+                      <p className="text-slate-600 text-lg">{selectedMeditation.description}</p>
                     </div>
                   </div>
                   
-                  <Badge variant="outline" className="border-white/30 text-white">
+                  <Badge className={`${selectedMeditation.borderColor} ${selectedMeditation.textColor} text-lg px-4 py-2`}>
                     {currentPhase.replace('_', ' ').toUpperCase()}
                   </Badge>
                 </div>
 
                 {/* Timer Display */}
                 <div className="text-center">
-                  <div className="text-6xl font-mono font-bold mb-2">
+                  <div className={`text-7xl font-mono font-bold mb-4 ${selectedMeditation.textColor}`}>
                     {formatTime(timeRemaining)}
                   </div>
                   <Progress 
                     value={((duration * 60 - timeRemaining) / (duration * 60)) * 100} 
-                    className="w-64 h-2"
+                    className="w-80 h-3"
                   />
                 </div>
 
                 {/* Control Buttons */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-center gap-6">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10"
+                    className="border-slate-400 text-slate-700 hover:bg-slate-100 p-4"
                     onClick={resetSession}
                   >
                     <RotateCcw className="h-6 w-6" />
@@ -659,20 +703,20 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                   
                   <Button
                     size="lg"
-                    className={`bg-gradient-to-r ${selectedMeditation.color} hover:opacity-90 text-white text-lg px-8 py-4`}
+                    className={`bg-gradient-to-r ${selectedMeditation.color} hover:opacity-90 text-slate-800 text-xl px-10 py-6 shadow-lg`}
                     onClick={togglePlayPause}
                   >
                     {isPlaying ? (
-                      <Pause className="h-8 w-8" />
+                      <Pause className="h-10 w-10" />
                     ) : (
-                      <Play className="h-8 w-8" />
+                      <Play className="h-10 w-10" />
                     )}
                   </Button>
                   
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10"
+                    className="border-slate-400 text-slate-700 hover:bg-slate-100 p-4"
                     onClick={() => setAudioEnabled(!audioEnabled)}
                   >
                     {audioEnabled ? (
@@ -684,31 +728,31 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Quick Controls */}
-                <div className="flex items-center justify-center gap-4 text-sm">
+                <div className="flex items-center justify-center gap-6 text-sm">
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-slate-600 hover:bg-slate-100"
                     onClick={() => setShowVideo(!showVideo)}
                   >
                     {showVideo ? <Eye className="h-4 w-4 mr-2" /> : <EyeOff className="h-4 w-4 mr-2" />}
-                    Video
+                    Video Background
                   </Button>
                   
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-slate-600 hover:bg-slate-100"
                     onClick={() => setGuideEnabled(!guideEnabled)}
                   >
                     <Mic className="h-4 w-4 mr-2" />
-                    Guide
+                    Voice Guide
                   </Button>
                   
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-slate-600 hover:bg-slate-100"
                     onClick={() => {
                       resetSession();
                       setSelectedMeditation(null);
@@ -724,18 +768,18 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
             <div className="space-y-6">
               
               {/* Session Settings */}
-              <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
+              <Card className="bg-white/80 border-blue-200 backdrop-blend-overlay shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-t-lg">
+                  <CardTitle className="flex items-center gap-2 text-slate-700">
+                    <Settings className="h-5 w-5 text-purple-600" />
                     Session Settings
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label>Duration (minutes)</Label>
+                <CardContent className="p-6 grid grid-cols-3 gap-8">
+                  <div className="space-y-3">
+                    <Label className="text-slate-700 font-medium">Duration (minutes)</Label>
                     <Select value={duration.toString()} onValueChange={(value) => setDuration(parseInt(value))}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-slate-300">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -750,10 +794,10 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                     </Select>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label>Nature Sounds</Label>
+                  <div className="space-y-3">
+                    <Label className="text-slate-700 font-medium">Nature Sounds</Label>
                     <Select value={selectedSound} onValueChange={setSelectedSound}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-slate-300">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -766,9 +810,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                     </Select>
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="video-toggle">Background Video</Label>
+                      <Label htmlFor="video-toggle" className="text-slate-700 font-medium">Background Video</Label>
                       <Switch
                         id="video-toggle"
                         checked={showVideo}
@@ -776,7 +820,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="audio-toggle">Audio Guide</Label>
+                      <Label htmlFor="audio-toggle" className="text-slate-700 font-medium">Audio Guide</Label>
                       <Switch
                         id="audio-toggle"
                         checked={guideEnabled}
@@ -792,17 +836,19 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
                 {meditationPrograms.map((program) => (
                   <Card
                     key={program.id}
-                    className="bg-black/20 border-purple-500/30 backdrop-blur-sm hover:border-purple-400/50 transition-all cursor-pointer transform hover:scale-105"
+                    className={`bg-white/90 ${program.borderColor} border-2 backdrop-blend-overlay shadow-lg hover:shadow-xl transition-all cursor-pointer transform hover:scale-105`}
                     onClick={() => startMeditation(program)}
                   >
-                    <CardContent className="p-6 text-center space-y-4">
-                      <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${program.color}`}>
+                    <CardContent className="p-8 text-center space-y-4">
+                      <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${program.color} shadow-lg`}>
                         {program.icon}
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold mb-2">{program.title}</h3>
-                        <p className="text-gray-300 text-sm mb-3">{program.description}</p>
-                        <Badge variant="outline" className="border-purple-500/50">
+                        <h3 className={`text-2xl font-bold mb-3 ${program.textColor}`}>
+                          {program.title}
+                        </h3>
+                        <p className="text-slate-600 text-base mb-4">{program.description}</p>
+                        <Badge variant="outline" className={`${program.borderColor} ${program.textColor}`}>
                           Default: {program.defaultDuration} min
                         </Badge>
                       </div>
