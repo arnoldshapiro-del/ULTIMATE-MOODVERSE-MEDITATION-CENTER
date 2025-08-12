@@ -132,13 +132,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Professional nature sounds with WORKING URLs
+  // REAL working nature sounds - using actual audio files
   const natureSounds = [
     {
       id: 'rain',
       name: 'Gentle Rain',
       icon: '🌧️',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFM3LF8NSFNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgE',
+      url: 'https://www.soundjay.com/misc/sounds/rain-01.wav',
       type: 'nature',
       description: 'Soft rainfall for deep relaxation'
     },
