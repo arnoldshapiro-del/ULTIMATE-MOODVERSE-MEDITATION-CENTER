@@ -760,9 +760,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       }
     } else {
       // Use generated audio
-      const generatedAudio = generateSimpleAudio(330, 60);
+      const generatedAudio = generateNatureSound(soundId, 60);
       if (generatedAudio) {
-        generatedAudio.play();
+        const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
         console.log('✅ Generated standalone audio playing');
       }
     }
