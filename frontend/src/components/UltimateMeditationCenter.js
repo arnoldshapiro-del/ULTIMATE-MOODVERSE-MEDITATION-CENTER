@@ -48,7 +48,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const musicAudioRef = useRef(null);
   const timerRef = useRef(null);
 
-  // Professional meditation programs with calm colors
+  // Professional meditation programs with calm colors and working videos
   const meditationPrograms = [
     {
       id: 'mindfulness',
@@ -60,7 +60,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       borderColor: 'border-blue-200',
       defaultDuration: 10,
       phases: ['preparation', 'centering', 'awareness', 'integration'],
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      videoUrl: 'https://player.vimeo.com/external/380928701.hd.mp4?s=b53f9b37c10a4bdcc34b45c18fb8e9c8e97c7e5b&profile_id=175',
       backgroundGradient: 'linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%)',
       defaultNatureSound: 'ocean',
       guidedInstructions: {
@@ -80,7 +80,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       borderColor: 'border-green-200',
       defaultDuration: 8,
       phases: ['preparation', 'rhythm', 'deepening', 'integration'],
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      videoUrl: 'https://player.vimeo.com/external/194837908.sd.mp4?s=c350076905b61ca5c92681694c33a5a91f2fda92&profile_id=164',
       backgroundGradient: 'linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%)',
       defaultNatureSound: 'forest',
       guidedInstructions: {
@@ -100,7 +100,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       borderColor: 'border-pink-200',
       defaultDuration: 12,
       phases: ['preparation', 'reflection', 'appreciation', 'integration'],
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      videoUrl: 'https://player.vimeo.com/external/269852600.hd.mp4?s=428eb0b8dcc0c0cf4dc70c8a2bfab5b831edc4e6&profile_id=175',
       backgroundGradient: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%)',
       defaultNatureSound: 'birds',
       guidedInstructions: {
@@ -120,7 +120,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       borderColor: 'border-purple-200',
       defaultDuration: 15,
       phases: ['preparation', 'scanning', 'release', 'integration'],
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+      videoUrl: 'https://player.vimeo.com/external/235468050.hd.mp4?s=1ae71c6351c7a110a8ddea8b4f0f7a24bc5e6c0b&profile_id=175',
       backgroundGradient: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)',
       defaultNatureSound: 'rain',
       guidedInstructions: {
