@@ -609,9 +609,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       } catch (error) {
         console.warn('Nature sound failed, trying generated audio:', error);
         // Fallback to generated audio
-        const generatedAudio = generateSimpleAudio(220, 30);
+        const generatedAudio = generateNatureSound(selectedSound, 30);
         if (generatedAudio) {
-          generatedAudio.play();
+          const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
         }
       }
     } else {
