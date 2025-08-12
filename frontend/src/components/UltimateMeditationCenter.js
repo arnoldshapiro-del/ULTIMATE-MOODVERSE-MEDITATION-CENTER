@@ -48,9 +48,49 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const musicAudioRef = useRef(null);
   const timerRef = useRef(null);
   
-  // Current active audio context and sources for cleanup
-  const [currentAudioContext, setCurrentAudioContext] = useState(null);
+  // Single AudioContext instance management
+  const [sharedAudioContext, setSharedAudioContext] = useState(null);
   const [activeSources, setActiveSources] = useState([]);
+
+  // Initialize single AudioContext
+  const getAudioContext = () => {
+    if (!sharedAudioContext) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        setSharedAudioContext(audioContext);
+        return audioContext;
+      } catch (error) {
+        console.warn('AudioContext creation failed:', error);
+        return null;
+      }
+    }
+    
+    // Resume context if suspended
+    if (sharedAudioContext.state === 'suspended') {
+      sharedAudioContext.resume();
+    }
+    
+    return sharedAudioContext;
+  };
+
+  // Clean up audio resources properly
+  const cleanupAudio = () => {
+    // Stop and disconnect all active sources
+    activeSources.forEach(({ source, gainNode }) => {
+      try {
+        if (source) {
+          source.stop();
+          source.disconnect();
+        }
+        if (gainNode) {
+          gainNode.disconnect();
+        }
+      } catch (e) {
+        // Source might already be stopped
+      }
+    });
+    setActiveSources([]);
+  };
 
   // Professional meditation programs with working video URLs
   const meditationPrograms = [
