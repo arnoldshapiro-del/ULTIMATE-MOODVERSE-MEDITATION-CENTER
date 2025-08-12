@@ -753,12 +753,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       
       if (soundData && soundData.audioContext && soundData.buffer) {
         const playback = playAudioBuffer(soundData.audioContext, soundData.buffer, 1, true);
-        
-        if (playback) {
-          setCurrentAudioContext(soundData.audioContext);
-          setActiveSources([playback]);
-          console.log('✅ Standalone sound playing successfully');
-        }
+        console.log('✅ Standalone sound playing successfully');
       }
     } catch (error) {
       console.warn('Standalone sound failed:', error);
