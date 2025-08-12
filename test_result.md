@@ -297,9 +297,9 @@ test_plan:
 
   - task: "Ultimate Meditation Center Multimedia"
     implemented: true
-    working: true
+    working: false
     file: "UltimateMeditationCenter.js"
-    stuck_count: 3
+    stuck_count: 4
     priority: "high"
     needs_retesting: false
     status_history:
@@ -311,10 +311,13 @@ test_plan:
         - comment: "TESTING UPDATE: Meditation center modal now opens successfully and program selection works. Timer and controls are functional. However, video and audio elements are still not rendering in DOM despite having valid video URLs in content. Added demo login functionality. Issue appears to be in conditional rendering logic preventing video/audio elements from being created. Background CSS elements (2 found) suggest fallback is working but primary multimedia elements not rendering."
         - working: false
         - agent: "main"
-        - comment: "MAJOR MULTIMEDIA OVERHAUL: Replaced all placeholder video URLs with working Vimeo links (ocean, nature, meditation content), replaced broken base64 audio with proper MP3 URLs from soundjay.com, added Enya 'Only Time' music track, completely rebuilt Web Audio API fallback system with realistic nature sound generation (rain, ocean waves, forest, birds, fire, wind, river), fixed dual video element issue causing DOM conflicts, improved conditional rendering logic, enhanced autoplay handling with better error recovery, added sophisticated volume control integration. This should resolve the core multimedia playback issues that users have been reporting."
+        - comment: "MAJOR MULTIMEDIA OVERHAUL: Replaced all placeholder video URLs with working Vimeo links (ocean, nature, meditation content), replaced broken base64 audio with proper MP3 URLs from soundjay.com, added Enya 'Only Time' music track, completely rebuilt Web Audio API fallback system with realistic nature sound generation (rain, ocean waves, forest, birds, fire, wind, river), fixed dual video element issue causing DOM conflicts, improved conditional rendering logic, enhanced autoplay handling with better error recovery, added sophisticated volume control integration. This should resolve the core multimedia playback issues that users have been reported."
         - working: true
         - agent: "testing"
         - comment: "🎉 COMPREHENSIVE MEDITATION CENTER MULTIMEDIA TESTING COMPLETED SUCCESSFULLY! All major multimedia fixes have been verified and are working perfectly: ✅ Authentication & Basic Navigation: Demo login works, main app loads properly, meditation center accessible ✅ Meditation Center Access: Modal opens successfully, all 4 meditation programs (Mindfulness, Breathing Focus, Gratitude Practice, Body Scan Journey) are accessible ✅ Video Background Testing: Vimeo videos confirmed working (https://player.vimeo.com/external/194837908.sd.mp4) with proper loop and autoplay attributes - resolves user complaints about non-playing videos ✅ Nature Sound Testing: 3 audio elements found with Web Audio API fallback system generating realistic nature sounds - resolves user complaints about 'loud high-pitched sounds' ✅ Volume Control Testing: All 4 independent volume sliders working perfectly (Master Volume 70%, Nature Sounds 60%, Guide Voice 80%, Background Music 50%) ✅ Standalone Nature Sounds Player: Toggle functional, nature sounds playable without full meditation sessions ✅ Enya 'Only Time' Music: Integrated in background music system ✅ Web Audio API Fallback: Sophisticated fallback system generates realistic nature sounds when URLs fail ✅ Session Controls: Timer countdown, play/pause/reset controls, phase transitions all functional. CONCLUSION: The meditation center multimedia overhaul has successfully resolved all reported user issues. Videos play properly, nature sounds are calming (not screeching), volume controls work independently, and the complete multimedia experience is now functional."
+        - working: false
+        - agent: "testing"
+        - comment: "🚨 CRITICAL AUDIO CONTEXT MANAGEMENT ISSUE DISCOVERED: While the mathematical fixes (2*PI) have resolved the high-pitched screeching sounds, a new critical issue has been identified. Testing revealed persistent 'Cannot close a closed AudioContext' errors occurring every time a nature sound is played. DETAILED FINDINGS: ✅ POSITIVE: All 8 nature sounds (Rain, Ocean, Forest, Birds, Fire, Wind, River, Enya) are accessible and clickable ✅ POSITIVE: Mathematical fixes confirmed - no more screeching sounds detected ✅ POSITIVE: Volume controls (4 sliders) working perfectly ✅ POSITIVE: Standalone mode functional ✅ POSITIVE: Modal opens and navigation works ❌ CRITICAL: AudioContext cleanup system is broken - 7+ 'Cannot close a closed AudioContext' errors during testing ❌ CRITICAL: Rapid sound switching triggers multiple AudioContext errors ❌ ISSUE: Video backgrounds not rendering (0 video elements found) ❌ ISSUE: Meditation program start buttons have click interception issues. CONCLUSION: The core screeching issue is resolved, but the AudioContext management system needs immediate fixing to prevent audio instability and potential memory leaks."
 
   - task: "Backend API Verification After Meditation Fixes"
     implemented: true
