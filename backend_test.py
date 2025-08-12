@@ -374,7 +374,7 @@ class UltimateMoodVerseAPITester:
         print("\n🏆 Testing Achievement System...")
         
         # Get current achievements
-        response = self.make_request('GET', '/achievements', params={'user_id': self.test_user_id})
+        response = self.make_request('GET', '/user/achievements', params={'user_id': self.test_user_id})
         
         if response['success']:
             achievements = response['data']
