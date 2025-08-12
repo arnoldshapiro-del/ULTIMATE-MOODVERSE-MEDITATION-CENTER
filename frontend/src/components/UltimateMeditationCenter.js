@@ -40,6 +40,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   
   // Standalone mode for just playing sounds
   const [standaloneMode, setStandaloneMode] = useState(false);
+  // Audio permission gate
+  const [userActivated, setUserActivated] = useState(false);
+  const [showGate, setShowGate] = useState(false);
   
   // Refs for multimedia elements
   const videoRef = useRef(null);
@@ -179,42 +182,27 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   // Clean nature sounds array - NO MORE BROKEN BASE64 DATA
   const natureSounds = [
     {
-      id: 'rain',
-      name: 'Gentle Rain',
-      icon: '🌧️',
-      url: '',
+      \1'/media/gentle-rain.wav',
       type: 'nature',
       description: 'Soft rainfall for deep relaxation'
     },
     {
-      id: 'ocean',
-      name: 'Ocean Waves',
-      icon: '🌊',
-      url: '',
+      \1'/media/ocean-waves.wav',
       type: 'nature',
       description: 'Rhythmic ocean waves'
     },
     {
-      id: 'forest',
-      name: 'Forest Ambience',
-      icon: '🌲',
-      url: '',
+      \1'/media/forest-ambience.wav',
       type: 'nature',
       description: 'Peaceful forest sounds'
     },
     {
-      id: 'birds',
-      name: 'Bird Songs',
-      icon: '🐦',
-      url: '',
+      \1'/media/bird-songs.wav',
       type: 'nature',
       description: 'Gentle bird chirping'
     },
     {
-      id: 'fire',
-      name: 'Crackling Fire',
-      icon: '🔥',
-      url: '',
+      \1'/media/crackling-fire.wav',
       type: 'nature',
       description: 'Warm fireplace crackling'
     },
@@ -227,10 +215,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       description: 'Soft wind through trees'
     },
     {
-      id: 'river',
-      name: 'Flowing River',
-      icon: '🏞️',
-      url: '',
+      \1'/media/flowing-river.wav',
       type: 'nature',
       description: 'Peaceful flowing water'
     },
@@ -501,6 +486,18 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     };
   }, []);
 
+  
+  // Ensure audio is activated by a user gesture; if not, show the overlay
+  const ensureActivation = async () => {
+    if (userActivated) {
+      const ctx = getAudioContext();
+      try { if (ctx && ctx.state === 'suspended') { await ctx.resume(); } } catch (e) {}
+      return true;
+    }
+    setShowGate(true);
+    return false;
+  };
+
   // Timer management
   useEffect(() => {
     if (isPlaying && timeRemaining > 0) {
@@ -557,7 +554,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     
     // Start multimedia
     setTimeout(async () => {
-      await startAllMedia();
+      if (await ensureActivation()) { await startAllMedia(); }
     }, 500);
   };
 
@@ -571,7 +568,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         videoRef.current.volume = (masterVolume / 100) * 0.3;
         
         try {
-          await videoRef.current.play();
+          try { await videoRef.current.play(); } catch(err) { setShowGate(true); throw err; }
           console.log('✅ Video started successfully');
         } catch (e) {
           console.log('Video autoplay prevented, trying user interaction required approach');
@@ -581,7 +578,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       
       // Start nature sounds with FIXED generators
       if (audioEnabled && selectedSound !== 'silence') {
-        await startNatureSound();
+        if (await ensureActivation()) { await startNatureSound(); }
       }
       
       // Start guided audio
@@ -648,7 +645,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     setIsPlaying(newState);
     
     if (newState) {
-      await startAllMedia();
+      if (await ensureActivation()) { await startAllMedia(); }
     } else {
       pauseAllMedia();
     }
@@ -736,6 +733,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   };
 
   const playStandaloneSound = async (soundId) => {
+    if (!(await ensureActivation())) return;
     setSelectedSound(soundId);
     if (soundId === 'silence') {
       cleanupAudio();
@@ -778,6 +776,21 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
+    {showGate && !userActivated && (
+      <div id="audio-gate-overlay" style={{position:'fixed',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(15,23,42,0.55)',zIndex:9999}}>
+        <div style={{background:'white',borderRadius:16,padding:'24px 28px',maxWidth:520,boxShadow:'0 8px 30px rgba(0,0,0,.2)'}}>
+          <h3 style={{fontSize:22,fontWeight:800,marginBottom:8}}>Enable Audio</h3>
+          <p style={{color:'#475569',marginBottom:16}}>Tap once to allow audio/video playback. This is required by your browser.</p>
+          <button
+            onClick={async ()=>{ setUserActivated(true); try{ const ctx=getAudioContext(); if(ctx && ctx.state==='suspended'){ await ctx.resume(); } }catch(e){}; setShowGate(false);}}
+            style={{background:'#2563EB',color:'white',border:'0',borderRadius:12,padding:'10px 16px',fontWeight:700}}
+          >
+            Enable & Continue
+          </button>
+        </div>
+      </div>
+    )}
+
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-slate-800 border-0 shadow-2xl">
         <DialogHeader>
