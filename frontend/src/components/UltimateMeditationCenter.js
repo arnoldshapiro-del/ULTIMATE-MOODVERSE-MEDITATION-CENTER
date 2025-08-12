@@ -616,9 +616,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       }
     } else {
       // Use generated audio for sounds without URL
-      const generatedAudio = generateSimpleAudio(440, 30);
+      const generatedAudio = generateNatureSound(selectedSound, 60);
       if (generatedAudio) {
-        generatedAudio.play();
+        const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
         console.log('✅ Generated audio playing');
       }
     }
