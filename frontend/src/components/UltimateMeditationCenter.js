@@ -569,14 +569,16 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       // Start background video
       if (showVideo && videoRef.current && selectedMeditation.videoUrl) {
         console.log('🎥 Starting background video:', selectedMeditation.videoUrl);
-        videoRef.current.src = selectedMeditation.videoUrl;
         videoRef.current.volume = (masterVolume / 100) * 0.3;
-        videoRef.current.load();
-        await videoRef.current.play().then(() => {
+        
+        try {
+          await videoRef.current.play();
           console.log('✅ Video started successfully');
-        }).catch(e => {
-          console.log('Video autoplay prevented, user interaction required');
-        });
+        } catch (e) {
+          console.log('Video autoplay prevented, trying user interaction required approach');
+          // Try to set up video for later manual play
+          videoRef.current.load();
+        }
       }
       
       // Start nature sounds
