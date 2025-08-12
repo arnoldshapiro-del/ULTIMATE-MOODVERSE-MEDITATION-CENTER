@@ -2456,6 +2456,86 @@ const UltimateMoodTracker = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Mood Details Modal */}
+      {showMoodDetails && selectedMoodDate && (
+        <Dialog open={showMoodDetails} onOpenChange={setShowMoodDetails}>
+          <DialogContent className="max-w-md bg-gradient-to-br from-slate-800 to-purple-900 text-white border-purple-500/50">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-center">
+                📅 Mood Details
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {/* Date */}
+              <div className="text-center">
+                <p className="text-lg font-semibold text-purple-200">
+                  {selectedMoodDate.formattedDate}
+                </p>
+              </div>
+              
+              {/* Mood Display */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center ${selectedMoodDate.mood.color} shadow-xl animate-pulse`}>
+                  <span className="text-4xl">{selectedMoodDate.mood.emoji}</span>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {selectedMoodDate.mood.label}
+                  </h3>
+                  <p className="text-purple-200 text-sm mb-3">
+                    {selectedMoodDate.mood.category}
+                  </p>
+                  
+                  {/* Intensity Bar */}
+                  <div className="w-full bg-white/20 rounded-full h-3 mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-purple-400 to-pink-400 h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${(selectedMoodDate.mood.intensity / 10) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-purple-200">
+                    Intensity: {selectedMoodDate.mood.intensity}/10
+                  </p>
+                </div>
+              </div>
+              
+              {/* Notes if available */}
+              {selectedMoodDate.mood.notes && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold mb-2 text-purple-200">Notes:</h4>
+                  <p className="text-white/80 text-sm">
+                    {selectedMoodDate.mood.notes}
+                  </p>
+                </div>
+              )}
+              
+              {/* Actions */}
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 border-purple-400/50 text-purple-200 hover:bg-purple-800/50"
+                  onClick={() => setShowMoodDetails(false)}
+                >
+                  Close
+                </Button>
+                <Button 
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  onClick={() => {
+                    setCurrentDate(selectedMoodDate.date);
+                    setShowMoodDetails(false);
+                    // This will show the mood entry form for that date
+                  }}
+                >
+                  Edit Mood
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Ultimate Meditation Center */}
       <UltimateMeditationCenter 
         isOpen={showMeditationCenter} 
