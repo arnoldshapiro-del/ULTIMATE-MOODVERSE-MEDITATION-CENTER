@@ -513,6 +513,8 @@ const UltimateMoodTracker = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showCreateMood, setShowCreateMood] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
+  const [selectedMoodDate, setSelectedMoodDate] = useState(null);
+  const [showMoodDetails, setShowMoodDetails] = useState(false);
   const [showCrisisSupport, setShowCrisisSupport] = useState(false);
   const [showAdvancedAnalytics, setShowAdvancedAnalytics] = useState(false);
   
