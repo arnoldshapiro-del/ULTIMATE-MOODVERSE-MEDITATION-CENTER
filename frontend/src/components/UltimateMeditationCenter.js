@@ -192,32 +192,317 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Generate simple audio tones for testing
-  const generateSimpleAudio = (frequency = 220, duration = 1) => {
+  // Enhanced Web Audio API generator for better fallback sounds
+  const generateNatureSound = (type, duration = 60) => {
     if (typeof window === 'undefined' || !window.AudioContext) return null;
     
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
       
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      let soundGenerator;
       
-      oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      switch(type) {
+        case 'rain':
+          soundGenerator = createRainSound(audioContext, duration);
+          break;
+        case 'ocean':
+          soundGenerator = createOceanWaves(audioContext, duration);
+          break;
+        case 'forest':
+          soundGenerator = createForestAmbience(audioContext, duration);
+          break;
+        case 'birds':
+          soundGenerator = createBirdSongs(audioContext, duration);
+          break;
+        case 'fire':
+          soundGenerator = createFireCrackling(audioContext, duration);
+          break;
+        case 'wind':
+          soundGenerator = createWindSound(audioContext, duration);
+          break;
+        case 'river':
+          soundGenerator = createRiverSound(audioContext, duration);
+          break;
+        default:
+          soundGenerator = createCalmTone(audioContext, duration);
+      }
       
-      return {
-        play: () => {
-          oscillator.start();
-          setTimeout(() => oscillator.stop(), duration * 1000);
-        }
-      };
+      return soundGenerator;
     } catch (error) {
-      console.warn('Audio generation failed:', error);
+      console.warn('Enhanced audio generation failed:', error);
       return null;
     }
+  };
+
+  // Create realistic rain sound
+  const createRainSound = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      // Generate pink noise with varying intensity
+      let noise = (Math.random() * 2 - 1);
+      noise = noise * Math.sin(i * 0.001) * 0.3; // Rain intensity variation
+      channelData[i] = noise;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.5) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create ocean wave sound
+  const createOceanWaves = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Layer multiple sine waves for ocean effect
+      let wave = Math.sin(time * Math.PI * 0.5) * 0.3;
+      wave += Math.sin(time * Math.PI * 0.3) * 0.2;
+      wave += (Math.random() * 2 - 1) * 0.1; // Add some noise
+      channelData[i] = wave;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.5) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create forest ambience
+  const createForestAmbience = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Create subtle forest rustling
+      let rustle = (Math.random() * 2 - 1) * 0.1;
+      rustle += Math.sin(time * 0.1) * 0.05; // Gentle breeze
+      channelData[i] = rustle;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.3) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create bird songs
+  const createBirdSongs = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      let chirp = 0;
+      
+      // Add occasional bird chirps
+      if (Math.random() < 0.0001) {
+        const frequency = 800 + Math.random() * 1200;
+        chirp = Math.sin(time * frequency) * Math.exp(-time * 10) * 0.3;
+      }
+      
+      // Add ambient forest background
+      chirp += (Math.random() * 2 - 1) * 0.05;
+      channelData[i] = chirp;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.4) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create fire crackling
+  const createFireCrackling = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      let crackle = 0;
+      
+      // Random crackling sounds
+      if (Math.random() < 0.001) {
+        crackle = (Math.random() * 2 - 1) * 0.4;
+      }
+      
+      // Base fire rumble
+      const time = i / audioContext.sampleRate;
+      crackle += Math.sin(time * 60) * 0.1;
+      crackle += (Math.random() * 2 - 1) * 0.05;
+      
+      channelData[i] = crackle;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.5) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create wind sound
+  const createWindSound = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Create wind-like filtered noise
+      let wind = (Math.random() * 2 - 1);
+      wind = wind * Math.sin(time * 0.5) * 0.2; // Wind gusts
+      channelData[i] = wind;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.3) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create river sound
+  const createRiverSound = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Flowing water sound
+      let flow = (Math.random() * 2 - 1) * 0.3;
+      flow += Math.sin(time * Math.PI * 2) * 0.1; // Water rhythm
+      channelData[i] = flow;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.4) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
+  };
+
+  // Create calm tone
+  const createCalmTone = (audioContext, duration) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Gentle sine wave
+      let tone = Math.sin(time * Math.PI * 220) * 0.1;
+      tone += Math.sin(time * Math.PI * 330) * 0.05;
+      channelData[i] = tone;
+    }
+    
+    return {
+      buffer,
+      play: (volume = 0.2) => {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+        source.loop = true;
+        source.start();
+        
+        return { source, gainNode };
+      }
+    };
   };
 
   // Timer management
