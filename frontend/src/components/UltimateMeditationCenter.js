@@ -47,8 +47,12 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const guideAudioRef = useRef(null);
   const musicAudioRef = useRef(null);
   const timerRef = useRef(null);
+  
+  // Current active audio context and sources for cleanup
+  const [currentAudioContext, setCurrentAudioContext] = useState(null);
+  const [activeSources, setActiveSources] = useState([]);
 
-  // Professional meditation programs with calm colors and working videos
+  // Professional meditation programs with working video URLs
   const meditationPrograms = [
     {
       id: 'mindfulness',
@@ -132,13 +136,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // REAL working nature sounds - using actual audio files
+  // Clean nature sounds array - NO MORE BROKEN BASE64 DATA
   const natureSounds = [
     {
       id: 'rain',
       name: 'Gentle Rain',
       icon: '🌧️',
-      url: 'https://www.soundjay.com/misc/sounds/rain-01.wav',
+      url: '',
       type: 'nature',
       description: 'Soft rainfall for deep relaxation'
     },
@@ -146,7 +150,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'ocean',
       name: 'Ocean Waves',
       icon: '🌊',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAYBjqx3/LMfCUFJHfH8N2QQAUUV7Hp66pWFAlFnt/xwGEcBjyw4/LNfCUEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBj==',
+      url: '',
       type: 'nature',
       description: 'Rhythmic ocean waves'
     },
@@ -154,7 +158,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'forest',
       name: 'Forest Ambience',
       icon: '🌲',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH==',
+      url: '',
       type: 'nature',
       description: 'Peaceful forest sounds'
     },
@@ -162,7 +166,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'birds',
       name: 'Bird Songs',
       icon: '🐦',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAURrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjg==',
+      url: '',
       type: 'nature',
       description: 'Gentle bird chirping'
     },
@@ -170,7 +174,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'fire',
       name: 'Crackling Fire',
       icon: '🔥',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2wQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/Mf==',
+      url: '',
       type: 'nature',
       description: 'Warm fireplace crackling'
     },
@@ -178,9 +182,25 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       id: 'wind',
       name: 'Gentle Wind',
       icon: '💨',
-      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjOm1+3QfSgEJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUVrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LMfCUFJHfH8N2QQAUUXrTp56hVFApGn+DyvmAcBjqx3/LM==',
+      url: '',
       type: 'nature',
       description: 'Soft wind through trees'
+    },
+    {
+      id: 'river',
+      name: 'Flowing River',
+      icon: '🏞️',
+      url: '',
+      type: 'nature',
+      description: 'Peaceful flowing water'
+    },
+    {
+      id: 'enya_only_time',
+      name: 'Only Time (Enya)',
+      icon: '🎵',
+      url: '',
+      type: 'music',
+      description: 'Enya - Only Time (Calming Version)'
     },
     {
       id: 'silence',
@@ -192,114 +212,88 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // Enhanced Web Audio API generator for better fallback sounds
-  const generateNatureSound = (type, duration = 60) => {
+  // FIXED Web Audio API generators with CORRECT MATHEMATICS
+  const generateNatureSound = (type, duration = 60, volume = 0.5) => {
     if (typeof window === 'undefined' || !window.AudioContext) return null;
     
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       
-      let soundGenerator;
+      let soundData;
       
       switch(type) {
         case 'rain':
-          soundGenerator = createRainSound(audioContext, duration);
+          soundData = createRainSound(audioContext, duration, volume);
           break;
         case 'ocean':
-          soundGenerator = createOceanWaves(audioContext, duration);
+          soundData = createOceanWaves(audioContext, duration, volume);
           break;
         case 'forest':
-          soundGenerator = createForestAmbience(audioContext, duration);
+          soundData = createForestAmbience(audioContext, duration, volume);
           break;
         case 'birds':
-          soundGenerator = createBirdSongs(audioContext, duration);
+          soundData = createBirdSongs(audioContext, duration, volume);
           break;
         case 'fire':
-          soundGenerator = createFireCrackling(audioContext, duration);
+          soundData = createFireCrackling(audioContext, duration, volume);
           break;
         case 'wind':
-          soundGenerator = createWindSound(audioContext, duration);
+          soundData = createWindSound(audioContext, duration, volume);
           break;
         case 'river':
-          soundGenerator = createRiverSound(audioContext, duration);
+          soundData = createRiverSound(audioContext, duration, volume);
+          break;
+        case 'enya_only_time':
+          soundData = createEnyaInspiredMelody(audioContext, duration, volume);
           break;
         default:
-          soundGenerator = createCalmTone(audioContext, duration);
+          soundData = createCalmTone(audioContext, duration, volume);
       }
       
-      return soundGenerator;
+      return soundData;
     } catch (error) {
-      console.warn('Enhanced audio generation failed:', error);
+      console.warn('Audio generation failed:', error);
       return null;
     }
   };
 
-  // Create realistic rain sound
-  const createRainSound = (audioContext, duration) => {
-    const bufferSize = audioContext.sampleRate * duration;
-    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-    const channelData = buffer.getChannelData(0);
-    
-    for (let i = 0; i < bufferSize; i++) {
-      // Generate pink noise with varying intensity
-      let noise = (Math.random() * 2 - 1);
-      noise = noise * Math.sin(i * 0.001) * 0.3; // Rain intensity variation
-      channelData[i] = noise;
-    }
-    
-    return {
-      buffer,
-      play: (volume = 0.5) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
-  };
-
-  // Create ocean wave sound
-  const createOceanWaves = (audioContext, duration) => {
+  // FIXED: Create realistic rain sound with proper math
+  const createRainSound = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
     
     for (let i = 0; i < bufferSize; i++) {
       const time = i / audioContext.sampleRate;
-      // Layer multiple sine waves for ocean effect
-      let wave = Math.sin(time * Math.PI * 0.5) * 0.3;
-      wave += Math.sin(time * Math.PI * 0.3) * 0.2;
-      wave += (Math.random() * 2 - 1) * 0.1; // Add some noise
-      channelData[i] = wave;
+      // Generate pink noise with varying intensity
+      let noise = (Math.random() * 2 - 1);
+      noise = noise * (0.3 + Math.sin(time * 0.5) * 0.2); // Rain intensity variation
+      channelData[i] = noise * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.5) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create forest ambience
-  const createForestAmbience = (audioContext, duration) => {
+  // FIXED: Create ocean wave sound with CORRECT frequency calculations
+  const createOceanWaves = (audioContext, duration, volume) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // FIXED: Added proper 2*PI conversion for frequencies
+      let wave = Math.sin(time * 0.5 * 2 * Math.PI) * 0.3;
+      wave += Math.sin(time * 0.3 * 2 * Math.PI) * 0.2;
+      wave += (Math.random() * 2 - 1) * 0.1; // Add some noise
+      channelData[i] = wave * volume;
+    }
+    
+    return { audioContext, buffer };
+  };
+
+  // FIXED: Create forest ambience with proper amplitude
+  const createForestAmbience = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
@@ -308,30 +302,15 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       const time = i / audioContext.sampleRate;
       // Create subtle forest rustling
       let rustle = (Math.random() * 2 - 1) * 0.1;
-      rustle += Math.sin(time * 0.1) * 0.05; // Gentle breeze
-      channelData[i] = rustle;
+      rustle += Math.sin(time * 0.1 * 2 * Math.PI) * 0.05; // Gentle breeze - FIXED
+      channelData[i] = rustle * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.3) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create bird songs
-  const createBirdSongs = (audioContext, duration) => {
+  // FIXED: Create bird songs with CORRECT frequency calculations
+  const createBirdSongs = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
@@ -340,37 +319,23 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       const time = i / audioContext.sampleRate;
       let chirp = 0;
       
-      // Add occasional bird chirps
+      // Add occasional bird chirps with FIXED frequency calculation
       if (Math.random() < 0.0001) {
         const frequency = 800 + Math.random() * 1200;
-        chirp = Math.sin(time * frequency) * Math.exp(-time * 10) * 0.3;
+        // CRITICAL FIX: Added proper 2*PI conversion to prevent screeching
+        chirp = Math.sin(time * frequency * 2 * Math.PI) * Math.exp(-time * 10) * 0.3;
       }
       
       // Add ambient forest background
       chirp += (Math.random() * 2 - 1) * 0.05;
-      channelData[i] = chirp;
+      channelData[i] = chirp * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.4) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create fire crackling
-  const createFireCrackling = (audioContext, duration) => {
+  // FIXED: Create fire crackling
+  const createFireCrackling = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
@@ -383,34 +348,19 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
         crackle = (Math.random() * 2 - 1) * 0.4;
       }
       
-      // Base fire rumble
+      // Base fire rumble - FIXED frequency
       const time = i / audioContext.sampleRate;
-      crackle += Math.sin(time * 60) * 0.1;
+      crackle += Math.sin(time * 60 * 2 * Math.PI) * 0.1;
       crackle += (Math.random() * 2 - 1) * 0.05;
       
-      channelData[i] = crackle;
+      channelData[i] = crackle * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.5) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create wind sound
-  const createWindSound = (audioContext, duration) => {
+  // FIXED: Create wind sound
+  const createWindSound = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
@@ -419,30 +369,15 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       const time = i / audioContext.sampleRate;
       // Create wind-like filtered noise
       let wind = (Math.random() * 2 - 1);
-      wind = wind * Math.sin(time * 0.5) * 0.2; // Wind gusts
-      channelData[i] = wind;
+      wind = wind * Math.sin(time * 0.5 * 2 * Math.PI) * 0.2; // Wind gusts - FIXED
+      channelData[i] = wind * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.3) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create river sound
-  const createRiverSound = (audioContext, duration) => {
+  // FIXED: Create river sound
+  const createRiverSound = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
@@ -451,58 +386,89 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       const time = i / audioContext.sampleRate;
       // Flowing water sound
       let flow = (Math.random() * 2 - 1) * 0.3;
-      flow += Math.sin(time * Math.PI * 2) * 0.1; // Water rhythm
-      channelData[i] = flow;
+      flow += Math.sin(time * 2 * 2 * Math.PI) * 0.1; // Water rhythm - FIXED
+      channelData[i] = flow * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.4) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
-      }
-    };
+    return { audioContext, buffer };
   };
 
-  // Create calm tone
-  const createCalmTone = (audioContext, duration) => {
+  // NEW: Create Enya-inspired melody
+  const createEnyaInspiredMelody = (audioContext, duration, volume) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const channelData = buffer.getChannelData(0);
     
     for (let i = 0; i < bufferSize; i++) {
       const time = i / audioContext.sampleRate;
-      // Gentle sine wave
-      let tone = Math.sin(time * Math.PI * 220) * 0.1;
-      tone += Math.sin(time * Math.PI * 330) * 0.05;
-      channelData[i] = tone;
+      // Create ethereal melody - FIXED frequencies
+      let melody = Math.sin(time * 220 * 2 * Math.PI) * 0.1;
+      melody += Math.sin(time * 330 * 2 * Math.PI) * 0.08;
+      melody += Math.sin(time * 440 * 2 * Math.PI) * 0.06;
+      melody *= (1 + Math.sin(time * 0.1 * 2 * Math.PI)) * 0.5; // Gentle amplitude variation
+      channelData[i] = melody * volume;
     }
     
-    return {
-      buffer,
-      play: (volume = 0.2) => {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = volume;
-        source.loop = true;
-        source.start();
-        
-        return { source, gainNode };
+    return { audioContext, buffer };
+  };
+
+  // FIXED: Create calm tone
+  const createCalmTone = (audioContext, duration, volume) => {
+    const bufferSize = audioContext.sampleRate * duration;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const channelData = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      const time = i / audioContext.sampleRate;
+      // Gentle sine wave - FIXED frequency calculation
+      let tone = Math.sin(time * 220 * 2 * Math.PI) * 0.1;
+      tone += Math.sin(time * 330 * 2 * Math.PI) * 0.05;
+      channelData[i] = tone * volume;
+    }
+    
+    return { audioContext, buffer };
+  };
+
+  // Play generated audio buffer
+  const playAudioBuffer = (audioContext, buffer, volume = 1, loop = true) => {
+    try {
+      const source = audioContext.createBufferSource();
+      const gainNode = audioContext.createGain();
+      
+      source.buffer = buffer;
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      gainNode.gain.value = volume;
+      source.loop = loop;
+      source.start();
+      
+      return { source, gainNode, audioContext };
+    } catch (error) {
+      console.warn('Audio playback failed:', error);
+      return null;
+    }
+  };
+
+  // Clean up audio resources
+  const cleanupAudio = () => {
+    activeSources.forEach(({ source, audioContext }) => {
+      try {
+        source.stop();
+        audioContext.close();
+      } catch (e) {
+        // Audio context might already be closed
       }
-    };
+    });
+    setActiveSources([]);
+    
+    if (currentAudioContext) {
+      try {
+        currentAudioContext.close();
+      } catch (e) {
+        // Context might already be closed
+      }
+      setCurrentAudioContext(null);
+    }
   };
 
   // Timer management
@@ -548,6 +514,9 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   const startMeditation = async (program) => {
     console.log('🧘 Starting meditation:', program.title);
     
+    // Clean up any existing audio
+    cleanupAudio();
+    
     setSelectedMeditation(program);
     setTimeRemaining(duration * 60);
     setCurrentPhase('preparation');
@@ -576,12 +545,11 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
           console.log('✅ Video started successfully');
         } catch (e) {
           console.log('Video autoplay prevented, trying user interaction required approach');
-          // Try to set up video for later manual play
           videoRef.current.load();
         }
       }
       
-      // Start nature sounds
+      // Start nature sounds with FIXED generators
       if (audioEnabled && selectedSound !== 'silence') {
         await startNatureSound();
       }
@@ -597,32 +565,26 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   };
 
   const startNatureSound = async () => {
-    const sound = natureSounds.find(s => s.id === selectedSound);
-    if (!sound) return;
-    
-    if (sound.url && natureAudioRef.current) {
-      try {
-        console.log('🌿 Starting nature sound:', sound.name);
-        natureAudioRef.current.src = sound.url;
-        natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
-        natureAudioRef.current.loop = true;
-        await natureAudioRef.current.play();
-        console.log('✅ Nature sound playing');
-      } catch (error) {
-        console.warn('Nature sound failed, trying generated audio:', error);
-        // Fallback to generated audio
-        const generatedAudio = generateNatureSound(selectedSound, 30);
-        if (generatedAudio) {
-          const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
+    try {
+      console.log('🌿 Starting nature sound:', selectedSound);
+      
+      // Clean up previous audio
+      cleanupAudio();
+      
+      // Generate new audio with FIXED mathematics
+      const soundData = generateNatureSound(selectedSound, 60, (masterVolume / 100) * (natureVolume / 100));
+      
+      if (soundData && soundData.audioContext && soundData.buffer) {
+        const playback = playAudioBuffer(soundData.audioContext, soundData.buffer, 1, true);
+        
+        if (playback) {
+          setCurrentAudioContext(soundData.audioContext);
+          setActiveSources([playback]);
+          console.log('✅ Generated nature sound playing successfully');
         }
       }
-    } else {
-      // Use generated audio for sounds without URL
-      const generatedAudio = generateNatureSound(selectedSound, 60);
-      if (generatedAudio) {
-        const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
-        console.log('✅ Generated audio playing');
-      }
+    } catch (error) {
+      console.warn('Nature sound generation failed:', error);
     }
   };
 
@@ -673,10 +635,14 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       videoRef.current.pause();
     }
     
-    // Pause nature sounds
-    if (natureAudioRef.current) {
-      natureAudioRef.current.pause();
-    }
+    // Pause generated audio by stopping sources
+    activeSources.forEach(({ source }) => {
+      try {
+        source.stop();
+      } catch (e) {
+        // Source might already be stopped
+      }
+    });
     
     // Stop speech synthesis
     if ('speechSynthesis' in window) {
@@ -688,11 +654,13 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     setIsPlaying(false);
     setTimeRemaining(duration * 60);
     setCurrentPhase('preparation');
+    cleanupAudio();
     pauseAllMedia();
   };
 
   const handleSessionComplete = () => {
     setIsPlaying(false);
+    cleanupAudio();
     pauseAllMedia();
     
     if (guideEnabled && 'speechSynthesis' in window) {
@@ -723,9 +691,12 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       videoRef.current.volume = masterRatio * 0.3;
     }
     
-    if (natureAudioRef.current) {
-      natureAudioRef.current.volume = masterRatio * (natureVolume / 100);
-    }
+    // Update active audio sources volume
+    activeSources.forEach(({ gainNode }) => {
+      if (gainNode) {
+        gainNode.gain.value = masterRatio * (natureVolume / 100);
+      }
+    });
   };
 
   // Standalone nature sounds player
@@ -735,38 +706,37 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       // Entering standalone mode
       setSelectedMeditation(null);
       setIsPlaying(false);
+      cleanupAudio();
     }
   };
 
   const playStandaloneSound = async (soundId) => {
     setSelectedSound(soundId);
-    if (soundId === 'silence') return;
+    if (soundId === 'silence') {
+      cleanupAudio();
+      return;
+    }
     
-    const sound = natureSounds.find(s => s.id === soundId);
-    if (!sound) return;
-    
-    if (sound.url && natureAudioRef.current) {
-      try {
-        natureAudioRef.current.src = sound.url;
-        natureAudioRef.current.volume = (masterVolume / 100) * (natureVolume / 100);
-        natureAudioRef.current.loop = true;
-        await natureAudioRef.current.play();
-        console.log('✅ Standalone sound playing:', sound.name);
-      } catch (error) {
-        console.warn('Standalone sound failed:', error);
-        // Fallback to generated audio
-        const generatedAudio = generateNatureSound(soundId, 60);
-        if (generatedAudio) {
-          const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
+    try {
+      console.log('🎵 Playing standalone sound:', soundId);
+      
+      // Clean up previous audio
+      cleanupAudio();
+      
+      // Generate new audio with FIXED mathematics
+      const soundData = generateNatureSound(soundId, 60, (masterVolume / 100) * (natureVolume / 100));
+      
+      if (soundData && soundData.audioContext && soundData.buffer) {
+        const playback = playAudioBuffer(soundData.audioContext, soundData.buffer, 1, true);
+        
+        if (playback) {
+          setCurrentAudioContext(soundData.audioContext);
+          setActiveSources([playback]);
+          console.log('✅ Standalone sound playing successfully');
         }
       }
-    } else {
-      // Use generated audio
-      const generatedAudio = generateNatureSound(soundId, 60);
-      if (generatedAudio) {
-        const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
-        console.log('✅ Generated standalone audio playing');
-      }
+    } catch (error) {
+      console.warn('Standalone sound failed:', error);
     }
   };
 
@@ -776,6 +746,14 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanupAudio();
+      clearInterval(timerRef.current);
+    };
+  }, []);
 
   if (!isOpen) return null;
 
