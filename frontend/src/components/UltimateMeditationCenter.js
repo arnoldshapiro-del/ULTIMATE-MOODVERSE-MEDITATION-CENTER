@@ -916,14 +916,16 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
             <Card className="bg-white/90 border-2 shadow-2xl min-h-[500px] relative overflow-hidden">
               
               {/* Background Video Container */}
-              {showVideo && (
+              {showVideo && selectedMeditation && selectedMeditation.videoUrl && (
                 <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
                   <video
                     ref={videoRef}
+                    src={selectedMeditation.videoUrl}
                     className="w-full h-full object-cover opacity-40"
                     loop
                     muted={false}
                     playsInline
+                    autoPlay
                   />
                 </div>
               )}
