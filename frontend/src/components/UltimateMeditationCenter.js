@@ -786,16 +786,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
           </DialogTitle>
         </DialogHeader>
 
-        {/* Hidden Audio/Video Elements */}
-        <video
-          ref={videoRef}
-          className="hidden"
-          loop
-          muted={false}
-          playsInline
-          preload="metadata"
-        />
-        
+        {/* Hidden Audio Elements */}
         <audio
           ref={natureAudioRef}
           preload="metadata"
