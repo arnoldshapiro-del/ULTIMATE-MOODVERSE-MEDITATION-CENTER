@@ -252,13 +252,12 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
     }
   ];
 
-  // FIXED Web Audio API generators with CORRECT MATHEMATICS
+  // FIXED Web Audio API generators with CORRECT MATHEMATICS and SINGLE CONTEXT
   const generateNatureSound = (type, duration = 60, volume = 0.5) => {
-    if (typeof window === 'undefined' || !window.AudioContext) return null;
+    const audioContext = getAudioContext();
+    if (!audioContext) return null;
     
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
       let soundData;
       
       switch(type) {
@@ -290,7 +289,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
           soundData = createCalmTone(audioContext, duration, volume);
       }
       
-      return soundData;
+      return { audioContext, buffer: soundData.buffer };
     } catch (error) {
       console.warn('Audio generation failed:', error);
       return null;
