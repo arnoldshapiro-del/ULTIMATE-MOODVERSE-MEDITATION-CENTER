@@ -1839,7 +1839,24 @@ const UltimateMoodTracker = () => {
                           ${day.date ? 'cursor-pointer hover:bg-white/10' : ''} 
                           ${day.mood ? `${day.mood.color} shadow-lg` : 'bg-white/5 border-white/10'}
                         `}
-                        onClick={() => day.date && setCurrentDate(day.date)}
+                        onClick={() => {
+                          if (day.date) {
+                            setCurrentDate(day.date);
+                            if (day.mood) {
+                              setSelectedMoodDate({
+                                date: day.date,
+                                mood: day.mood,
+                                formattedDate: day.date.toLocaleDateString('en-US', { 
+                                  weekday: 'long', 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })
+                              });
+                              setShowMoodDetails(true);
+                            }
+                          }
+                        }}
                       >
                         {day.date && (
                           <>
