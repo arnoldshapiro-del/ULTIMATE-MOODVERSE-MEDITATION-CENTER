@@ -753,8 +753,10 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       } catch (error) {
         console.warn('Standalone sound failed:', error);
         // Fallback to generated audio
-        const generatedAudio = generateSimpleAudio(330, 60);
-        if (generatedAudio) generatedAudio.play();
+        const generatedAudio = generateNatureSound(soundId, 60);
+        if (generatedAudio) {
+          const { source, gainNode } = generatedAudio.play((masterVolume / 100) * (natureVolume / 100));
+        }
       }
     } else {
       // Use generated audio
