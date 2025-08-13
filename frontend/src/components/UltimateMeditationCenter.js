@@ -182,27 +182,27 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
   // Clean nature sounds array - NO MORE BROKEN BASE64 DATA
   const natureSounds = [
     {
-      \1'/media/gentle-rain.wav',
+      '/media/gentle-rain.wav',
       type: 'nature',
       description: 'Soft rainfall for deep relaxation'
     },
     {
-      \1'/media/ocean-waves.wav',
+      '/media/ocean-waves.wav',
       type: 'nature',
       description: 'Rhythmic ocean waves'
     },
     {
-      \1'/media/forest-ambience.wav',
+      '/media/forest-ambience.wav',
       type: 'nature',
       description: 'Peaceful forest sounds'
     },
     {
-      \1'/media/bird-songs.wav',
+      '/media/bird-songs.wav',
       type: 'nature',
       description: 'Gentle bird chirping'
     },
     {
-      \1'/media/crackling-fire.wav',
+      '/media/crackling-fire.wav',
       type: 'nature',
       description: 'Warm fireplace crackling'
     },
@@ -215,7 +215,7 @@ const UltimateMeditationCenter = ({ isOpen, onClose }) => {
       description: 'Soft wind through trees'
     },
     {
-      \1'/media/flowing-river.wav',
+      '/media/flowing-river.wav',
       type: 'nature',
       description: 'Peaceful flowing water'
     },
