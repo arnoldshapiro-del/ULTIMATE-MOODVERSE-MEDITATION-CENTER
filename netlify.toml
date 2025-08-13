@@ -1,0 +1,7 @@
+[build]
+  base    = "frontend"
+  command = "yarn add -D @babel/plugin-proposal-private-methods@^7 @babel/plugin-proposal-private-property-in-object@^7 && yarn build"
+  publish = "build"
+
+[build.processing]
+  skip_processing = true
